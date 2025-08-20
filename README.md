@@ -1,5 +1,7 @@
 # CBattle - Interactive Battle Package
 
+![CBattle Banner](assets/Promo.png)
+
 [![Ruff](https://github.com/Dotsian/CBattle/actions/workflows/ruff.yml/badge.svg)](https://github.com/Dotsian/CBattle/actions/workflows/ruff.yml)
 [![Issues](https://img.shields.io/github/issues/Dotsian/CBattle)](https://github.com/Dotsian/CBattle/issues)
 [![discord.py](https://img.shields.io/badge/discord-py-blue.svg)](https://github.com/Rapptz/discord.py)

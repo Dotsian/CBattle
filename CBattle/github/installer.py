@@ -24,6 +24,7 @@ import requests
 from discord.ext import commands
 
 UPDATING = os.path.isdir("ballsdex/packages/cbattle")
+ASSET_PATH = "https://raw.githubusercontent.com/Dotsian/CBattle/refs/heads/main/assets"
 
 
 @dataclass
@@ -36,8 +37,13 @@ class InstallerConfig:
     files = ["__init__.py", "cog.py", "config.toml"]
     path = "ballsdex/packages/cbattle"
 
+    appearance = {
+        "logo": f"{ASSET_PATH}/Logo.png",
+        "banner": f"{ASSET_PATH}/Promo.png",
+    }
+
     name = "CBattle"
-    color = "#FC0341"
+    color = "#FF466A"
 
 
 @dataclass
@@ -84,6 +90,8 @@ class InstallerEmbed(discord.Embed):
                 f"while this {config.name} instance is on version {current_version}."
             )
 
+        self.set_image(url=config.appearance["banner"])
+
     def error(self):
         self.title = f"{config.name} ERROR"
         self.description = (
@@ -103,6 +111,8 @@ class InstallerEmbed(discord.Embed):
 
         self.installer.interface.attachments = [logger.file(f"{config.name}.log")]
 
+        self.set_thumbnail(url=config.appearance["logo"])
+
     def installed(self):
         self.title = f"{config.name} Installed!"
         self.description = (
@@ -110,6 +120,8 @@ class InstallerEmbed(discord.Embed):
         )
         self.color = discord.Color.from_str(config.color)
         self.timestamp = datetime.now()
+
+        self.set_thumbnail(url=config.appearance["logo"])
 
     def uninstalled(self):
         self.title = f"{config.name} Uninstalled!"
