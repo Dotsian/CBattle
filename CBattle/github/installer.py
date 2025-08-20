@@ -366,7 +366,7 @@ class Installer:
 
         if "packages:\n" not in lines:
             return False
-        
+
         if item in lines:
             return True
 
