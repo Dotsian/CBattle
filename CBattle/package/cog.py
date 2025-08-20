@@ -43,4 +43,3 @@ class CBattle(commands.Cog):
 
             case _:
                 await ctx.send(f"Request raised error code `{request.status_code}`.")
-        
