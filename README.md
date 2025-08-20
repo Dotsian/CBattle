@@ -1,2 +1,2 @@
 # Battle-Package
-Interactive battle package for the Ballsde Discord bot
+Interactive battle package for the Ballsdex Discord bot
