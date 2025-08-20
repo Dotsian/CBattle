@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "battle"
+version = "0.0.1a"
+description = "Interactive battle package for the Ballsdex Discord bot."
+authors = [
+    'Cayla "DotZZ" Selby <official.dotzz@gmail.com>',
+]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.13,<3.14"
+"discord.py" = "2.5.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = ">=0.12.9"
+
+[build-system]
+requires = ["poetry-core>=2.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py313"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = true
+line-ending = "lf"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E203"]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
