@@ -36,3 +36,6 @@ ignore = ["E203"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
+
+[tool.ruff.lint.per-file-ignores]
+"CBattle/github/*.py" = ["F704", "F706", "F821"]
