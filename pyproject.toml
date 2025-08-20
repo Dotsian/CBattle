@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "battle"
+name = "CBattle"
 version = "0.0.1a"
 description = "Interactive battle package for the Ballsdex Discord bot."
 authors = [

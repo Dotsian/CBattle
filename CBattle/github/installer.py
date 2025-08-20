@@ -32,7 +32,7 @@ class InstallerConfig:
     Configuration class for the installer.
     """
 
-    github = ["Dotsian/Battle-System", "main"]
+    github = ["Dotsian/CBattle", "main"]
     files = ["__init__.py", "config.toml"]
     path = "ballsdex/packages/cbattle"
 
