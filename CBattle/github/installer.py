@@ -288,7 +288,7 @@ class ConfigView(discord.ui.View):
     async def reset_button(self, interaction: discord.Interaction):
         request = requests.get(
             f"https://api.github.com/repos/{config.github[0]}/"
-            "contents/battle/package/config.toml",
+            "contents/CBattle/package/config.toml",
             {"ref": config.github[1]}
         )
 
@@ -409,13 +409,13 @@ class Installer:
                 logger.log(f"{file} already exists, skipping", "INFO")
                 continue
 
-            logger.log(f"Fetching {file} from '{link}/battle/package'", "INFO")
+            logger.log(f"Fetching {file} from '{link}/CBattle/package'", "INFO")
 
-            request = requests.get(f"{link}/battle/package/{file}", {"ref": config.github[1]})
+            request = requests.get(f"{link}/CBattle/package/{file}", {"ref": config.github[1]})
 
             if request.status_code != requests.codes.ok:
                 raise Exception(
-                    f"Request to return {file} from '{link}/battle/package' "
+                    f"Request to return {file} from '{link}/CBattle/package' "
                     f"resulted with error code {request.status_code}"
                 )
 
@@ -425,7 +425,7 @@ class Installer:
             with open(f"{config.path}/{file}", "w") as opened_file:
                 opened_file.write(content.decode())
 
-            logger.log(f"Installed {file} from '{link}/battle/package'", "INFO")
+            logger.log(f"Installed {file} from '{link}/CBattle/package'", "INFO")
 
         logger.log("Inserting package in 'config.yml'", "INFO")
 
