@@ -19,7 +19,7 @@ To install CBattle, you must have the following:
 
 ## CBattle Setup
 
-The CBattle installer is an intuitive menu from DexScript that allows you to easily update, install, configure, and uninstall the package. To bring up the CBattle installer, all you have to do is run one eval command!
+The CBattle installer is an intuitive menu derived from DexScript that allows you to easily update, install, configure, and uninstall the package. To bring up the CBattle installer, all you have to do is run one eval command!
 
 To install CBattle, run the following eval command:
 

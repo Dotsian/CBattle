@@ -1,7 +1,8 @@
 import discord
-from ballsdex.core.models import Player
 from discord import app_commands
 from discord.ext import commands
+
+from ballsdex.core.models import Player
 
 from .components import StartEmbed
 from .logic import Battle as BattleClass
