@@ -26,7 +26,11 @@ class TutorialPages(discord.ui.View):
 
     async def update_page(self, interaction: discord.Interaction):
         embed, file = await self.pages[self.current]()
-        await interaction.response.edit_message(embed=embed, attachments=[file], view=self)
+    
+        if file:
+            await interaction.response.edit_message(embed=embed, attachments=[file], view=self)
+        else:
+            await interaction.response.edit_message(embed=embed, view=self)
 
     async def go_first(self, interaction: discord.Interaction):
         if interaction.user.id != self.author_id:
