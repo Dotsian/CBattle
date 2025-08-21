@@ -52,6 +52,7 @@ class Battle(commands.GroupCog):
                     "https://gamepedia.cursecdn.com/zelda_gamepedia_en/thumb/6/68/PH_Red_Potion_Model.png/225px-PH_Red_Potion_Model.png?version=59fdeb61e177cc36789fd835546017e4",
                     # page 6: trophy
                     "https://th.bing.com/th/id/R.a5b17534342efbc6b3d1c9689255c7b7?rik=9u%2fKoEzC1XQ1jw&pid=ImgRaw&r=0",
+                ]
 
                 embed = discord.Embed(
                     title=f"Tutorial Page {page_num + 1}: {titles[page_num]}",
