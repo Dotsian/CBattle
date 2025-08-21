@@ -392,22 +392,6 @@ class Installer:
 
         return True
 
-    def uninstall_migrate(self):
-        with open("ballsdex/core/bot.py", "r") as read_file:
-            lines = read_file.readlines()
-
-        for index, line in enumerate(lines):
-            for migration in config.uninstall_migrations:
-                original = self.format_migration(migration)
-
-                if line != original:
-                    continue
-
-                lines.pop(index)
-
-        with open("ballsdex/core/bot.py", "w") as write_file:
-            write_file.writelines(lines)
-
     async def install(self):
         if not self.has_package_config():
             raise Exception(f"Your Ballsdex version is no longer compatible with {config.name}")
@@ -454,8 +438,6 @@ class Installer:
 
     async def uninstall(self):
         shutil.rmtree(config.path)
-
-        self.uninstall_migrate()
 
         await bot.unload_extension(config.path.replace("/", "."))  # type: ignore
 
