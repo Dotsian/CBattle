@@ -3,3 +3,10 @@ max-ball-amount = 5
 
 # Displays additional information for error handling.
 debug = false
+
+# Balll attributes
+[attributes]
+# Examples:
+# Poland = ["European"]
+# Brazil = ["South American", "Western Hemisphere"]
+# Mexico = ["Spanish"]
