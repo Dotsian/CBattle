@@ -142,6 +142,15 @@ class InstallerView(discord.ui.View):
         super().__init__()
         self.installer = installer
 
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.installer.user:
+            await interaction.response.send_message(
+                "You are not authorized to interact with this installer instance.", ephemeral=True
+            )
+            return False
+        
+        return True
+
     @discord.ui.button(style=discord.ButtonStyle.primary, label="Update" if UPDATING else "Install")
     async def install_button(self, interaction: discord.Interaction, _: discord.ui.Button):
         self.quit_button.disabled = True
@@ -277,6 +286,15 @@ class ConfigView(discord.ui.View):
         self.add_item(reset_button)
         self.add_item(quit_button)
 
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.installer.user:
+            await interaction.response.send_message(
+                "You are not authorized to interact with this installer instance.", ephemeral=True
+            )
+            return False
+        
+        return True
+
     async def back_button(self, interaction: discord.Interaction):
         self.installer.interface.embed = InstallerEmbed(self.installer, "setup")
         self.installer.interface.view = InstallerView(self.installer)
@@ -347,7 +365,8 @@ class InstallerGUI:
 
 
 class Installer:
-    def __init__(self):
+    def __init__(self, user: discord.User):
+        self.user = user
         self.interface = InstallerGUI(self)
 
     def has_package_config(self) -> bool:
@@ -462,5 +481,5 @@ class Installer:
         return old_version.group(1)
 
 
-installer = Installer()
+installer = Installer(ctx.author)  # type: ignore
 await installer.interface.reload()  # type: ignore
