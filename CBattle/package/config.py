@@ -1,10 +1,13 @@
 import discord
 import tomllib
 from pathlib import Path
+from dataclasses import dataclass
 
-maxballamount=5
-debug=False
-attributes={}
+@dataclass
+class Config()
+    maxballamount=5
+    debug=False
+    attributes={}
 
 def read_settings(path: "Path"):
     with open(Path, "r") as f:
