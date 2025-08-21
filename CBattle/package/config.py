@@ -1,6 +1,7 @@
+from dataclasses import dataclass
 import tomllib
 from pathlib import Path
-from dataclasses import dataclass
+
 
 @dataclass
 class Config():
