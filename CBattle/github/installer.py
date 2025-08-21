@@ -38,10 +38,7 @@ class InstallerConfig:
     path = "ballsdex/packages/cbattle"
     folder = "CBattle"
 
-    appearance = {
-        "logo": f"{ASSET_PATH}/Logo.png",
-        "banner": f"{ASSET_PATH}/Promo.png",
-    }
+    appearance = {"logo": f"{ASSET_PATH}/Logo.png", "banner": f"{ASSET_PATH}/Promo.png"}
 
     name = "CBattle"
     color = "#FF466A"
@@ -116,9 +113,7 @@ class InstallerEmbed(discord.Embed):
 
     def installed(self):
         self.title = f"{config.name} Installed!"
-        self.description = (
-            f"{config.name} has been succesfully installed to your bot."
-        )
+        self.description = f"{config.name} has been succesfully installed to your bot."
         self.color = discord.Color.from_str(config.color)
         self.timestamp = datetime.now()
 
@@ -147,9 +142,7 @@ class InstallerView(discord.ui.View):
         super().__init__()
         self.installer = installer
 
-    @discord.ui.button(
-        style=discord.ButtonStyle.primary, label="Update" if UPDATING else "Install"
-    )
+    @discord.ui.button(style=discord.ButtonStyle.primary, label="Update" if UPDATING else "Install")
     async def install_button(self, interaction: discord.Interaction, _: discord.ui.Button):
         self.quit_button.disabled = True
 
@@ -180,9 +173,7 @@ class InstallerView(discord.ui.View):
         await interaction.response.defer()
 
     @discord.ui.button(
-        style=discord.ButtonStyle.secondary,
-        label="Config",
-        disabled=not os.path.isfile(f"{config.path}/config.toml")
+        style=discord.ButtonStyle.secondary, label="Config", disabled=not os.path.isfile(f"{config.path}/config.toml")
     )
     async def config_button(self, interaction: discord.Interaction, _: discord.ui.Button):
         self.installer.interface.embed = InstallerEmbed(self.installer, "config")
@@ -236,10 +227,7 @@ class ConfigModal(discord.ui.Modal):
 
         await interaction.message.edit(**self.installer.interface.fields)
 
-        await interaction.response.send_message(
-            f"Updated `{self.setting}` to `{self.value.value}`!",
-            ephemeral=True
-        )
+        await interaction.response.send_message(f"Updated `{self.setting}` to `{self.value.value}`!", ephemeral=True)
 
 
 class ConfigSelect(discord.ui.Select):
@@ -261,9 +249,7 @@ class ConfigSelect(discord.ui.Select):
 
                 name = line.split(" ")[0]
 
-                options.append(
-                    discord.SelectOption(label=name, value=name, description=description)
-                )
+                options.append(discord.SelectOption(label=name, value=name, description=description))
 
                 description = ""
 
@@ -300,9 +286,8 @@ class ConfigView(discord.ui.View):
 
     async def reset_button(self, interaction: discord.Interaction):
         request = requests.get(
-            f"https://api.github.com/repos/{config.github[0]}/"
-            f"contents/{config.folder}/package/config.toml",
-            {"ref": config.github[1]}
+            f"https://api.github.com/repos/{config.github[0]}/contents/{config.folder}/package/config.toml",
+            {"ref": config.github[1]},
         )
 
         if request.status_code != requests.codes.ok:
@@ -449,8 +434,7 @@ class Installer:
     @property
     def latest_version(self):
         pyproject_request = requests.get(
-            f"https://api.github.com/repos/{config.github[0]}/contents/pyproject.toml",
-            {"ref": config.github[1]},
+            f"https://api.github.com/repos/{config.github[0]}/contents/pyproject.toml", {"ref": config.github[1]}
         )
 
         if pyproject_request.status_code != requests.codes.ok:
