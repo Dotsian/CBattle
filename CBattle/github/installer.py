@@ -12,13 +12,16 @@
 import os
 import re
 import shutil
+import zipfile
 from base64 import b64decode
 from dataclasses import dataclass
 from dataclasses import field as datafield
 from datetime import datetime
-from io import StringIO
+from io import BytesIO, StringIO
+from pathlib import Path
 from traceback import format_exc
 
+import aiohttp
 import discord
 import requests
 from discord.ext import commands
@@ -34,19 +37,6 @@ class InstallerConfig:
     """
 
     github = ["Dotsian/CBattle", "main"]
-    folders = ["customs"]
-    files = [
-        "__init__.py",
-        "cog.py",
-        "commands.py",
-        "components.py",
-        "logic.py",
-        "config.toml",
-        "pagination.py",
-        "customs/abilities.py",
-        "customs/base.py",
-        "customs/effects.py",
-    ]
     path = "ballsdex/packages/cbattle"
     folder = "CBattle"
 
@@ -420,45 +410,51 @@ class Installer:
         return True
 
     async def install(self):
+        def copytree_skip_existing(src: Path, dst: Path):
+            src = Path(src)
+            dst = Path(dst)
+
+            for path in src.rglob("*"):
+                print(f"Copying {path.as_posix()}")
+                relative_path = path.relative_to(src)
+                destination_path = dst / relative_path
+
+                if path.is_dir():
+                    destination_path.mkdir(parents=True, exist_ok=True)
+                elif destination_path.exists() and destination_path.suffix == ".toml":
+                    logger.log("Skipping overwriting existing toml file", "INFO")
+                else:
+                    destination_path.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(path, destination_path)
+
         if not self.has_package_config():
             raise Exception(f"Your Ballsdex version is not compatible with {config.name}")
 
-        link = f"https://api.github.com/repos/{config.github[0]}/contents"
+        tmp_package_path = Path(f"/tmp/bd_packages/{config.name}")
+        target_dir = Path(config.path)
 
-        os.makedirs(config.path, exist_ok=True)
+        if tmp_package_path.exists():
+            shutil.rmtree(tmp_package_path)
 
-        for folder in config.folders:
-            os.makedirs(f"{config.path}/{folder}", exist_ok=True)
+        os.makedirs(tmp_package_path)
+        async with aiohttp.ClientSession() as session:
+            url = f"https://github.com/{config.github[0]}/archive/refs/heads/{config.github[1]}.zip"
+            async with session.get(url) as response:
+                if response.status != 200:
+                    logger.log("Failed to download zip", "ERROR")
+                    return
+                logger.log("Get status code 200", "INFO")
+                data = await response.read()
+                with zipfile.ZipFile(BytesIO(data)) as zip_file:
+                    zip_file.extractall(path=tmp_package_path)
 
-        for file in config.files:
-            if file.endswith(".toml") and os.path.isfile(f"{config.path}/{file}"):
-                logger.log(f"{file} already exists, skipping", "INFO")
-                continue
-
-            logger.log(f"Fetching {file} from '{link}/{config.folder}/package'", "INFO")
-
-            request = requests.get(f"{link}/{config.folder}/package/{file}", {"ref": config.github[1]})
-
-            if request.status_code != requests.codes.ok:
-                raise Exception(
-                    f"Request to return {file} from '{link}/{config.folder}/package' "
-                    f"resulted with error code {request.status_code}"
-                )
-
-            request = request.json()
-            content = b64decode(request["content"])
-
-            with open(f"{config.path}/{file}", "w") as opened_file:
-                opened_file.write(content.decode())
-
-            logger.log(f"Installed {file} from '{link}/{config.folder}/package'", "INFO")
+        top_level_folder_name = config.github[0].split("/")[1] + "-" + config.github[1]
+        copytree_skip_existing(tmp_package_path / top_level_folder_name / config.folder / "package", target_dir)
 
         logger.log("Inserting package in 'config.yml'", "INFO")
-
         self.add_package(config.path.replace("/", "."))
 
         logger.log(f"Loading {config.name} extension", "INFO")
-
         try:
             await bot.reload_extension(config.path.replace("/", "."))  # type: ignore
         except commands.ExtensionNotLoaded:
