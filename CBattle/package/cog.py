@@ -127,4 +127,5 @@ class Battle(commands.GroupCog):
 
         embed.set_footer(text="Battle request will expire in 1 minute.")
 
-        await interaction.response.send_message(view=BattleStartView(interaction, user), embed=embed)
+        view = BattleStartView(interaction, user)
+        await interaction.response.send_message(view=view, embed=embed)
