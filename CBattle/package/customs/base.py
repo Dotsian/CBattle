@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-from typing import final
-
-from ..logic import BattleBall
+from typing import Any, final
 
 
 @dataclass
@@ -10,7 +8,7 @@ class BaseAbility:
     Base ability class for all custom abilities.
     """
 
-    ball: BattleBall
+    ball: Any
 
     passive: bool = False
     usable: int = 0
@@ -55,7 +53,7 @@ class BaseEffect:
     Base effect class for handling custom effects.
     """
 
-    ball: BattleBall
+    ball: Any
     rounds: int
 
     rounds_since: int = 0
@@ -75,7 +73,7 @@ class BaseEffect:
     def choose_ball(self) -> bool:
         return True
 
-    def fetch_damage(self, opponent_ball: BattleBall) -> int:
+    def fetch_damage(self, opponent_ball: Any) -> int:
         return self.ball.damage
 
     def round_passed(self, round_number: int):
