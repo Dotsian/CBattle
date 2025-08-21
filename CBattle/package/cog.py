@@ -4,9 +4,7 @@ from discord.ext import commands
 
 from ballsdex.core.models import Player
 
-from .components import StartEmbed
-from .logic import Battle as BattleClass
-from .logic import BattlePlayer
+from .components import BattleStartView
 
 
 class Battle(commands.GroupCog):
@@ -57,9 +55,8 @@ class Battle(commands.GroupCog):
             )
             return
 
-        battle_player1 = BattlePlayer(player1)
-        battle_player2 = BattlePlayer(player2)
+        embed = discord.Embed()
+        embed.title = "Battle Request!"
+        embed.description = f"{user.mention}, {interaction.user.mention} has invited you to a battle!"
 
-        battle = BattleClass(battle_player1, battle_player2)
-
-        await interaction.response.send_message(embed=StartEmbed(battle))
+        await interaction.response.send_message(view=BattleStartView(interaction.user, user), embed=embed)
