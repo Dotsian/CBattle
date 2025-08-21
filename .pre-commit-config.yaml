@@ -1,0 +1,15 @@
+# See https://pre-commit.com for more information
+
+files: .*\.py$
+
+repos:
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.6
+    hooks:
+      - id: uv-lock
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.10
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format

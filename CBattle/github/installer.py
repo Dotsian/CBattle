@@ -45,7 +45,7 @@ class InstallerConfig:
         "pagination.py",
         "customs/abilities.py",
         "customs/base.py",
-        "customs/effects.py"
+        "customs/effects.py",
     ]
     path = "ballsdex/packages/cbattle"
     folder = "CBattle"
@@ -79,6 +79,7 @@ def is_number(string: str):
         return True
     except ValueError:
         return False
+
 
 class InstallerEmbed(discord.Embed):
     def __init__(self, installer, embed_type="setup"):
