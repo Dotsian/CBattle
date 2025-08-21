@@ -5,6 +5,7 @@ from discord.ext import commands
 from ballsdex.core.models import Player
 
 from .components import BattleStartView
+from .pagination import TutorialPages
 
 
 class Battle(commands.GroupCog):
