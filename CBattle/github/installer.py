@@ -34,7 +34,7 @@ class InstallerConfig:
     """
 
     github = ["Dotsian/CBattle", "main"]
-    files = ["__init__.py", "cog.py", "commands.py", "components.py", "logic.py", "config.toml"]
+    files = ["__init__.py", "cog.py", "commands.py", "components.py", "logic.py", "config.toml", "pagination.py"]
     path = "ballsdex/packages/cbattle"
     folder = "CBattle"
 
