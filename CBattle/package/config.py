@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-import tomllib
 from pathlib import Path
+import tomllib
+
 
 
 @dataclass
