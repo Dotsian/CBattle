@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from ballsdex.core.models import Player
+from ballsdex.settings import settings
 
 from .components import BattleStartView
 from .pagination import TutorialPages
@@ -68,7 +69,11 @@ class Battle(commands.GroupCog):
         pages = [make_pages(i) for i in range(6)]
         view = TutorialPages(pages, interaction.user.id)
         embed, file = await pages[0]()
-        await interaction.response.send_message(embed=embed, file=file, view=view)
+        if file:
+            await interaction.response.send_message(embed=embed, file=file, view=view)
+        else:
+            await interaction.response.send_message(embed=embed, view=view)
+
 
     @app_commands.command()
     async def start(self, interaction: discord.Interaction, user: discord.User):
