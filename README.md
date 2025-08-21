@@ -8,7 +8,7 @@
 
 ## What is CBattle?
 
-CBattle is the first public interactive battle package developed by CrashTextAlex and DotZZ designed for the Ballsdex Discord bot that provides extensive customizability. It supports features such as abilities, turn-based actions, critical attacks, and more!
+CBattle is the first public interactive battle package developed by CrashTextAlex, Dormierian, and DotZZ designed for the Ballsdex Discord bot that provides extensive customizability. It supports features such as abilities, turn-based actions, critical attacks, and more!
 
 ## CBattle Requirements
 
