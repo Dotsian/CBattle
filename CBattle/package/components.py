@@ -1,4 +1,3 @@
-from code import interact
 from typing import TYPE_CHECKING
 
 import discord
@@ -9,7 +8,6 @@ from .logic import Battle
 
 if TYPE_CHECKING:
     from ballsdex.core.bot import BallsDexBot
-    from discord import Message
 
 
 class BattleStartView(View):
@@ -18,7 +16,7 @@ class BattleStartView(View):
     """
 
     def __init__(self, interaction: discord.Interaction["BallsDexBot"], target_player: discord.User):
-        super().__init__(timeout=5)
+        super().__init__(timeout=60)
 
         self.interaction = interaction
         self.start_player = interaction.user
