@@ -52,7 +52,9 @@ class BattleStartView(View):
         self.target_player = target_player
 
         self.battle: Battle | None = None
+
         self.timeout = TimeoutTimer(10, self.timeout_request, True)
+        self.timeout.start()
 
     async def timeout_request(self):
         for child in [x for x in self.children if isinstance(x, Button)]:
