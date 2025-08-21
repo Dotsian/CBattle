@@ -1,5 +1,14 @@
-# The max amount of countryballs that can be added into a battle.
+[settings]
+# The max amount of collectibles that can be added into a battle.
 max-ball-amount = 5
 
 # Displays additional information for error handling.
 debug = false
+
+[attributes]
+# Add attributes for collectibles here if you want to access them for abilities/effects.
+
+# EXAMPLES:
+# European = ["Poland"]
+# South-American = ["Brazil"]
+# Western-Hemisphere = ["Brazil", "Mexico"]
