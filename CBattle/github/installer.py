@@ -67,7 +67,7 @@ def is_number(string: str):
         return True
     except ValueError:
         return False
-    
+
 def conditional_round(number: float):
     return int(number) if number % 1 == 0 else number
 
