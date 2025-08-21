@@ -36,7 +36,7 @@ class TimeoutTimer:
             asyncio.create_task(self.function())
         else:
             self.function()
-        
+
         self.task = None
 
 class BattleStartView(View):
@@ -44,7 +44,7 @@ class BattleStartView(View):
     View that is displayed when starting a battle.
     """
 
-    def __init__(self, interaction: discord.interaction, target_player: discord.User):
+    def __init__(self, interaction: discord.Interaction["BallsDexBot"], target_player: discord.User):
         super().__init__()
 
         self.interaction = interaction
@@ -55,11 +55,11 @@ class BattleStartView(View):
         self.timeout = TimeoutTimer(10, self.timeout_request, True)
 
     async def timeout_request(self):
-        for child in [x for x in self.children if isinstance(child, Button)]:
+        for child in [x for x in self.children if isinstance(x, Button)]:
             child.disabled = True
 
         embed = self.interaction.message.embeds[0]
-        embed.description = "Battle timed out..."
+        embed.description = "Battle request timed out..."
 
         await self.interaction.response.edit_message(embed=embed, view=self)
 
@@ -68,10 +68,10 @@ class BattleStartView(View):
         if interaction.user.id != self.target_player.id:
             await interaction.response.send_message("Only the target player can accept a battle!", ephemeral=True)
             return
-        
+
         self.timeout.cancel()
 
-        for child in [x for x in self.children if isinstance(child, Button)]:
+        for child in [x for x in self.children if isinstance(x, Button)]:
             child.disabled = True
 
         embed = interaction.message.embeds[0]
@@ -86,10 +86,10 @@ class BattleStartView(View):
         if interaction.user.id != self.target_player.id:
             await interaction.response.send_message("Only the target player can accept a battle!", ephemeral=True)
             return
-        
+
         self.timeout.cancel()
 
-        for child in [x for x in self.children if isinstance(child, Button)]:
+        for child in [x for x in self.children if isinstance(x, Button)]:
             child.disabled = True
 
         embed = interaction.message.embeds[0]

@@ -1,5 +1,6 @@
 import discord
 
+
 class TutorialPages(discord.ui.View):
     def __init__(self, pages, author_id: int):
         super().__init__(timeout=None)

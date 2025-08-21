@@ -18,7 +18,7 @@ class Battle(commands.GroupCog):
     @app_commands.command()
     async def tutorial(self, interaction: discord.Interaction):
         """
-        View the tutorial for CBattling! 
+        View the tutorial for battling!
         """
 
     @app_commands.command()
