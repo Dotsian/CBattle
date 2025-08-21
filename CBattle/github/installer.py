@@ -68,9 +68,6 @@ def is_number(string: str):
     except ValueError:
         return False
 
-def conditional_round(number: float):
-    return int(number) if number % 1 == 0 else number
-
 class InstallerEmbed(discord.Embed):
     def __init__(self, installer, embed_type="setup"):
         super().__init__()
@@ -237,7 +234,7 @@ class ConfigModal(discord.ui.Modal):
                 elif full_value.startswith("[") and full_value.endswith("]"):
                     new_value = full_value
                 elif is_number(full_value):
-                    new_value = conditional_round(float(full_value))
+                    new_value = int(full_value) if float(full_value) % 1 == 0 else float(full_value)
 
                 new_lines.append(f"{self.setting} = {new_value}\n")
 

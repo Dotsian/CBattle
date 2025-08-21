@@ -61,8 +61,11 @@ class Battle(commands.GroupCog):
             )
             return
 
-        embed = discord.Embed()
-        embed.title = "Battle Request!"
-        embed.description = f"{user.mention}, {interaction.user.mention} has invited you to a battle!"
+        embed = discord.Embed(
+            title = "Battle Request!",
+            description = f"{user.mention}, {interaction.user.mention} has invited you to a battle!"
+        )
 
-        await interaction.response.send_message(view=BattleStartView(interaction.user, user), embed=embed)
+        embed.set_footer(text="Battle request will expire in 1 minute.")
+
+        await interaction.response.send_message(view=BattleStartView(interaction, user), embed=embed)
