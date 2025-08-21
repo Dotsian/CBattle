@@ -45,7 +45,7 @@ class BattleStartView(View):
     @button(style=discord.ButtonStyle.red, label="Decline")
     async def decline_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
         if interaction.user.id != self.target_player.id:
-            await interaction.response.send_message("Only the target player can accept a battle!", ephemeral=True)
+            await interaction.response.send_message("Only the target player can decline a battle!", ephemeral=True)
             return
 
         for child in [x for x in self.children if isinstance(x, Button)]:
