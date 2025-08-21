@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 
 from ballsdex.core.models import BallInstance, Player
 
+from .customs.base import BaseEffect
+
 
 @dataclass
 class BattleBall:
@@ -11,6 +13,15 @@ class BattleBall:
 
     model: BallInstance
     health: int
+
+    effect: BaseEffect | None = None
+
+    @property
+    def damage(self) -> int:
+        return self.model.attack
+
+    def apply_effect(self, effect: BaseEffect, rounds: int):
+        self.effect = effect(self, rounds)  # type: ignore
 
 
 @dataclass

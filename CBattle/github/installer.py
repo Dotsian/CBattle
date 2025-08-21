@@ -34,7 +34,19 @@ class InstallerConfig:
     """
 
     github = ["Dotsian/CBattle", "main"]
-    files = ["__init__.py", "cog.py", "commands.py", "components.py", "logic.py", "config.toml", "pagination.py"]
+    folders = ["customs"]
+    files = [
+        "__init__.py",
+        "cog.py",
+        "commands.py",
+        "components.py",
+        "logic.py",
+        "config.toml",
+        "pagination.py",
+        "customs/abilities.py",
+        "customs/base.py",
+        "customs/effects.py"
+    ]
     path = "ballsdex/packages/cbattle"
     folder = "CBattle"
 
@@ -408,11 +420,14 @@ class Installer:
 
     async def install(self):
         if not self.has_package_config():
-            raise Exception(f"Your Ballsdex version is no longer compatible with {config.name}")
+            raise Exception(f"Your Ballsdex version is not compatible with {config.name}")
 
         link = f"https://api.github.com/repos/{config.github[0]}/contents"
 
         os.makedirs(config.path, exist_ok=True)
+
+        for folder in config.folders:
+            os.makedirs(f"{config.path}/{folder}", exist_ok=True)
 
         for file in config.files:
             if file.endswith(".toml") and os.path.isfile(f"{config.path}/{file}"):
@@ -454,10 +469,6 @@ class Installer:
         shutil.rmtree(config.path)
 
         await bot.unload_extension(config.path.replace("/", "."))  # type: ignore
-
-    @staticmethod
-    def format_migration(line):
-        return line.replace("    ", "").replace("|", "    ").replace("/n", "\n")
 
     @property
     def latest_version(self):
