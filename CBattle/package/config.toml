@@ -1,2 +1,5 @@
+# The max amount of countryballs that can be added into a battle.
+max-ball-amount = 5
+
 # Displays additional information for error handling.
 debug = false

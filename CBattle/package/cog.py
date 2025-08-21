@@ -1,11 +1,14 @@
-import base64
-
-import requests
+import discord
+from ballsdex.core.models import Player
+from discord import app_commands
 from discord.ext import commands
 
-__version__ = "0.0.1a"
+from .components import StartEmbed
+from .logic import Battle as BattleClass
+from .logic import BattlePlayer
 
-class CBattle(commands.Cog):
+
+class Battle(commands.GroupCog):
     """
     Battle commands.
     """
@@ -13,33 +16,49 @@ class CBattle(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    @commands.is_owner()
-    async def cbattle(self, ctx: commands.Context, reference: str = "main"):
+    @app_commands.command()
+    async def start(self, interaction: discord.Interaction, user: discord.User):
         """
-        Displays the CBattle installer.
+        Starts a battle with a user.
 
         Parameters
         ----------
-        reference: str
-            The CBattle branch you want to run the installer on.
+        user: discord.User
+            The user you want to battle against.
         """
-        link = (
-            "https://api.github.com/repos/Dotsian/CBattle/contents/CBattle/github/installer.py"
-        )
+        if user.bot:
+            await interaction.response.send_message("You cannot battle against bots.", ephemeral=True)
+            return
 
-        request = requests.get(link, {"ref": reference})
+        if user.id == interaction.user.id:
+            await interaction.response.send_message("You cannot battle against yourself.", ephemeral=True)
+            return
 
-        match request.status_code:
-            case requests.codes.not_found:
-                await ctx.send(f"Could not find installer for the {reference} branch.")
+        if user.id in self.bot.blacklist:
+            await interaction.response.send_message("You cannot battle against a blacklisted player.", ephemeral=True)
+            return
 
-            case requests.codes.ok:
-                content = requests.get(link, {"ref": reference}).json()["content"]
+        player1, _ = await Player.get_or_create(discord_id=interaction.user.id)
+        player2, _ = await Player.get_or_create(discord_id=user.id)
 
-                await ctx.invoke(
-                    self.bot.get_command("eval"), body=base64.b64decode(content).decode()
-                )
+        blocked1 = await player1.is_blocked(player2)
+        blocked2 = await player2.is_blocked(player1)
 
-            case _:
-                await ctx.send(f"Request raised error code `{request.status_code}`.")
+        if blocked1:
+            await interaction.response.send_message(
+                "You cannot battle against a player you have blocked.", ephemeral=True
+            )
+            return
+
+        if blocked2:
+            await interaction.response.send_message(
+                "You cannot battle against a player that has blocked you.", ephemeral=True
+            )
+            return
+
+        battle_player1 = BattlePlayer(player1)
+        battle_player2 = BattlePlayer(player2)
+
+        battle = BattleClass(battle_player1, battle_player2)
+
+        await interaction.response.send_message(embed=StartEmbed(battle))
