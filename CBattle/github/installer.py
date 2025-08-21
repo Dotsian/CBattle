@@ -36,6 +36,7 @@ class InstallerConfig:
     github = ["Dotsian/CBattle", "main"]
     files = ["__init__.py", "cog.py", "commands.py", "components.py", "logic.py", "config.toml"]
     path = "ballsdex/packages/cbattle"
+    folder = "CBattle"
 
     appearance = {
         "logo": f"{ASSET_PATH}/Logo.png",
@@ -300,7 +301,7 @@ class ConfigView(discord.ui.View):
     async def reset_button(self, interaction: discord.Interaction):
         request = requests.get(
             f"https://api.github.com/repos/{config.github[0]}/"
-            "contents/CBattle/package/config.toml",
+            f"contents/{config.folder}/package/config.toml",
             {"ref": config.github[1]}
         )
 
@@ -405,13 +406,13 @@ class Installer:
                 logger.log(f"{file} already exists, skipping", "INFO")
                 continue
 
-            logger.log(f"Fetching {file} from '{link}/CBattle/package'", "INFO")
+            logger.log(f"Fetching {file} from '{link}/{config.folder}/package'", "INFO")
 
-            request = requests.get(f"{link}/CBattle/package/{file}", {"ref": config.github[1]})
+            request = requests.get(f"{link}/{config.folder}/package/{file}", {"ref": config.github[1]})
 
             if request.status_code != requests.codes.ok:
                 raise Exception(
-                    f"Request to return {file} from '{link}/CBattle/package' "
+                    f"Request to return {file} from '{link}/{config.folder}/package' "
                     f"resulted with error code {request.status_code}"
                 )
 
@@ -421,7 +422,7 @@ class Installer:
             with open(f"{config.path}/{file}", "w") as opened_file:
                 opened_file.write(content.decode())
 
-            logger.log(f"Installed {file} from '{link}/CBattle/package'", "INFO")
+            logger.log(f"Installed {file} from '{link}/{config.folder}/package'", "INFO")
 
         logger.log("Inserting package in 'config.yml'", "INFO")
 
