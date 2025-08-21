@@ -3,11 +3,9 @@ from typing import TYPE_CHECKING
 import discord
 from discord.ui import Button, View, button
 
-from .logic import Battle, BattlePlayer
-
+from .logic import Battle
 
 if TYPE_CHECKING:
-    from ballsdex.core.models import Player
     from ballsdex.core.bot import BallsDexBot
 
 
@@ -37,7 +35,7 @@ class BattleStartView(View):
         embed.description = "Battle accepted!"
         await interaction.response.edit_message(embed=embed, view=self)
 
-        battle = Battle(BattlePlayer(model=self.start_player), BattlePlayer(model=self.target_player))
+        # battle = Battle(BattlePlayer(model=self.start_player), BattlePlayer(model=self.target_player))
 
     @button(style=discord.ButtonStyle.red, label="Decline")
     async def decline_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
