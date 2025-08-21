@@ -148,7 +148,7 @@ class InstallerView(discord.ui.View):
                 "You are not authorized to interact with this installer instance.", ephemeral=True
             )
             return False
-        
+
         return True
 
     @discord.ui.button(style=discord.ButtonStyle.primary, label="Update" if UPDATING else "Install")
@@ -292,7 +292,7 @@ class ConfigView(discord.ui.View):
                 "You are not authorized to interact with this installer instance.", ephemeral=True
             )
             return False
-        
+
         return True
 
     async def back_button(self, interaction: discord.Interaction):
