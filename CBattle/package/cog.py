@@ -16,6 +16,12 @@ class Battle(commands.GroupCog):
         self.bot = bot
 
     @app_commands.command()
+    async def tutorial(self, interaction: discord.Interaction):
+        """
+        View the tutorial for CBattling! 
+        """
+
+    @app_commands.command()
     async def start(self, interaction: discord.Interaction, user: discord.User):
         """
         Starts a battle with a user.
