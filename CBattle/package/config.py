@@ -15,4 +15,5 @@ class Config:
         self.debug = data["settings"].get("debug", False)
         self.attributes = data.get("attributes", {})
 
+
 config = Config(Path("./config.toml"))
