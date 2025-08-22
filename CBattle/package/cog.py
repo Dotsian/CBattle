@@ -131,6 +131,12 @@ class Battle(commands.GroupCog):
 
         battle = self.battles[interaction_player]
 
+        if battle.started:
+            await interaction.response.send_message(
+                "You can't change your deck after the battle has started!", ephemeral=True
+            )
+            return
+
         if not battle.accepted:
             await interaction.response.send_message(
                 "You can't add a ball until the battle is accepted!", ephemeral=True
@@ -138,6 +144,10 @@ class Battle(commands.GroupCog):
             return
 
         battle_player = battle.player1 if battle.player1.model == interaction_player else battle.player2
+
+        if battle_player.locked:
+            await interaction.response.send_message("You can't change your deck after you've locked!", ephemeral=True)
+            return
 
         battleball = BattleBall.from_ballinstance(countryball)
 
@@ -149,7 +159,7 @@ class Battle(commands.GroupCog):
         emoji = self.bot.get_emoji(countryball.countryball.emoji_id)
 
         await interaction.response.send_message(
-            f"`#{countryball.id}` {emoji} {countryball.countryball.country} removed!", ephemeral=True
+            f"`#{countryball.id}` {emoji} {countryball.countryball.country} added!", ephemeral=True
         )
 
         await battle.accept_view.update()
@@ -172,6 +182,11 @@ class Battle(commands.GroupCog):
 
         battle = self.battles[interaction_player]
 
+        if battle.started:
+            await interaction.response.send_message(
+                "You can't change your deck after the battle has started!", ephemeral=True
+            )
+            return
         if not battle.accepted:
             await interaction.response.send_message(
                 "You can't remove a ball until the battle is accepted!", ephemeral=True
@@ -179,6 +194,10 @@ class Battle(commands.GroupCog):
             return
 
         battle_player = battle.player1 if battle.player1.model == interaction_player else battle.player2
+
+        if battle_player.locked:
+            await interaction.response.send_message("You can't change your deck after you've locked!", ephemeral=True)
+            return
 
         removing_ball = BattleBall.from_ballinstance(countryball)
 
@@ -224,6 +243,10 @@ class Battle(commands.GroupCog):
         user: discord.User
             The user you want to battle against.
         """
+
+        if not interaction.channel:
+            await interaction.response.send_message("This command must be run in a channel")
+
         if user.bot:
             await interaction.response.send_message("You cannot battle against bots.", ephemeral=True)
             return
@@ -272,7 +295,11 @@ class Battle(commands.GroupCog):
 
         embed.set_footer(text="Battle request will expire in 1 minute.")
 
-        battle = BattleState(BattlePlayer(model=player1, user=interaction.user), BattlePlayer(model=player2, user=user))
+        battle = BattleState(
+            player1=BattlePlayer(model=player1, user=interaction.user),
+            player2=BattlePlayer(model=player2, user=user),
+            channel=interaction.channel,
+        )
         self.battles[player1] = battle
 
         view = BattleStartView(interaction, user, battle, self.battles)
