@@ -123,7 +123,8 @@ class Battle(commands.GroupCog):
 
         battle_player.balls.append(BattleBall.from_ballinstance(countryball))
         emj = self.bot.get_emoji(countryball.countryball.emoji_id)
-        await interaction.response.send_message(f"`#{countryball.id}` {emj} {countryball.countryball.country} removed!", ephemeral=True)
+        await interaction.response.send_message(f"`#{countryball.id}` {emj} {countryball.countryball.country} removed!"
+                                                , ephemeral=True)
         await battle.accept_view.update()
 
     @app_commands.command()
