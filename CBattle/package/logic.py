@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Type
 
 from ballsdex.core.models import BallInstance, Player
 
@@ -14,14 +15,18 @@ class BattleBall:
     model: BallInstance
     health: int
 
-    effect: BaseEffect | None = None
+    effects: list[BaseEffect] = field(default_factory=list)
+
+    @classmethod
+    def from_ballinstance(cls, ballinstance: BallInstance):
+        return cls(model=ballinstance, health=ballinstance.health)
 
     @property
     def damage(self) -> int:
         return self.model.attack
 
-    def apply_effect(self, effect: BaseEffect, rounds: int):
-        self.effect = effect(self, rounds)  # type: ignore
+    def apply_effect(self, effect: Type[BaseEffect], rounds: int):
+        self.effects.append(effect(self, rounds))
 
 
 @dataclass
