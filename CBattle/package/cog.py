@@ -134,7 +134,7 @@ class Battle(commands.GroupCog):
 
         Parameters
         ----------
-        ball: countryball
+        countryball: BallInstance
             The ball to remove.
         """
         interaction_player, _ = await Player.get_or_create(discord_id=interaction.user.id)
