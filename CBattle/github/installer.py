@@ -456,6 +456,7 @@ class Installer:
         self.add_package(config.path.replace("/", "."))
 
         logger.log(f"Loading {config.name} extension", "INFO")
+
         try:
             await bot.reload_extension(config.path.replace("/", "."))  # type: ignore
         except commands.ExtensionNotLoaded:
@@ -464,20 +465,15 @@ class Installer:
         logger.log(f"{config.name} installation finished", "INFO")
 
     async def uninstall(self):
-
-        shutil.make_archive(f"{config.path}/temp/customs", 'zip', f"{config.path}/customs")
-
-        files = [
-            discord.File(f"{config.path}/config.toml"),
-            discord.File(f"{config.path}/temp/customs.zip"),
-        ]
+        shutil.make_archive(f"{config.path}/temp/customs", "zip", f"{config.path}/customs")
 
         await channel.send(  # type: ignore
-            f"Configuration file attached for {config.name} uninstallation",
-            files=files,
+            f"Backup files attached for {config.name} uninstallation",
+            files=[
+                discord.File(f"{config.path}/config.toml"),
+                discord.File(f"{config.path}/temp/customs.zip"),
+            ],
         )
-
-        os.remove(f"{config.path}/temp/customs.zip")
 
         shutil.rmtree(config.path)
 
