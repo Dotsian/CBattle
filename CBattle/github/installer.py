@@ -462,18 +462,15 @@ class Installer:
         self.installer.interface.embed = InstallerEmbed(self.installer, "uninstalled")
         self.installer.interface.view = None
 
-        await interaction.message.edit(**self.installer.interface.fields)
+        self.installer.interface.fields["attachments"] = [
+        discord.File(f"{config.path}/config.toml"),
+        discord.File(f"{config.path}/temp/customs.zip"),
+        ]
+
+        await interaction.message.edit(**self.installer.interface)
         await interaction.response.defer()
 
         shutil.make_archive(f"{config.path}/temp/customs", "zip", f"{config.path}/customs")
-
-        await channel.send(  # type: ignore
-            f"Backup files attached for {config.name} uninstallation",
-            files=[
-                discord.File(f"{config.path}/config.toml"),
-                discord.File(f"{config.path}/temp/customs.zip"),
-            ],
-        )
 
         shutil.rmtree(config.path)
 
