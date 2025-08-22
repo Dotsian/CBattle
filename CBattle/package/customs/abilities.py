@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from .base import BaseAbility
+from ..base import BaseAbility
 
 
 @dataclass

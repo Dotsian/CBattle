@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from .base import BaseEffect
+from ..base import BaseEffect
 
 
 @dataclass
