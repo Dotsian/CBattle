@@ -463,9 +463,9 @@ class Installer:
         logger.log(f"{config.name} installation finished", "INFO")
 
     async def uninstall(self):
-        await channel.send( # type: ignore
+        await channel.send(  # type: ignore
             f"Configuration file attached for {config.name} uninstallation",
-            file=discord.File(f"{config.path}/config.toml")
+            file=discord.File(f"{config.path}/config.toml"),
         )
 
         shutil.rmtree(config.path)

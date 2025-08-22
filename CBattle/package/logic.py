@@ -1,9 +1,16 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Type
+from typing import TYPE_CHECKING, Type
 
 from ballsdex.core.models import BallInstance, Player
 
 from .customs.base import BaseEffect
+
+if TYPE_CHECKING:
+    from discord import Member, User
+
+    from .components import BattleAcceptView
 
 
 @dataclass
@@ -36,11 +43,12 @@ class BattlePlayer:
     """
 
     model: Player
+    user: User | Member
     balls: list[BattleBall] = field(default_factory=list)
 
 
 @dataclass
-class Battle:
+class BattleState:
     """
     Stores both `BattlePlayer` instances and other additional information for a battle.
     """
@@ -49,3 +57,6 @@ class Battle:
     player2: BattlePlayer
 
     turn: int = 0
+    started: bool = False
+    accepted: bool = False
+    accept_view: BattleAcceptView | None = None
