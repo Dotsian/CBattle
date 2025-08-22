@@ -443,8 +443,12 @@ class Installer:
                     zip_file.extractall(path=tmp_package_path)
 
         top_level_folder_name = config.github[0].split("/")[1] + "-" + config.github[1]
-        copytree_skip_existing(tmp_package_path / top_level_folder_name / config.folder / "package",
-                               target_dir, protect_files=["config.toml", "customs/abilities.py"])
+
+        copytree_skip_existing(
+            tmp_package_path / top_level_folder_name / config.folder / "package",
+            target_dir,
+            protect_files=["config.toml", "customs/abilities.py"]
+        )
 
         logger.log("Inserting package in 'config.yml'", "INFO")
         self.add_package(config.path.replace("/", "."))
@@ -469,7 +473,7 @@ class Installer:
             discord.File(f"{config.path}/temp/customs.zip"),
         ]
 
-        await interaction.message.edit(**self.interface)
+        await interaction.message.edit(**self.interface.fields)
         await interaction.response.defer()
 
         shutil.rmtree(config.path) # Scary!
