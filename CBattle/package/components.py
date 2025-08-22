@@ -123,7 +123,7 @@ class BattleAcceptView(View):
 
         return embed
 
-    @button(style=discord.ButtonStyle.red, label="Lock")
+    @button(style=discord.ButtonStyle.green, label="🔒Lock")
     async def lock_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
         battle_player = self.battle.get_user(interaction.user)
         if battle_player is None:
@@ -149,7 +149,7 @@ class BattleAcceptView(View):
 
         view = TurnView(self.battle)
         message = await self.battle.channel.send("<Placeholder>", view=view)
-        self.battle.last_turn = TurnView
+        self.battle.last_turn = view
         view.message = message
 
     async def update(self):
@@ -161,3 +161,15 @@ class TurnView(View):
         self.battle: BattleState = battle
         self.message: discord.Message
         super().__init__()
+
+    @button(style=discord.ButtonStyle.green, label="Next Turn")
+    async def next_turn_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
+        await self.next_turn()
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+
+    async def next_turn(self):
+        view = TurnView(battle=self.battle)
+        message = await self.battle.channel.send("<Placeholder>", view=view)
+        self.battle.last_turn = view
+        view.message = message
