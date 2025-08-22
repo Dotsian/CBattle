@@ -9,7 +9,7 @@ from ballsdex.core.models import BallInstance, Player
 from .base import BaseEffect
 
 if TYPE_CHECKING:
-    from discord import Member, User
+    from discord import Member, TextChannel, User
 
     from .components import BattleAcceptView
 
@@ -71,6 +71,7 @@ class BattlePlayer:
     model: Player
     user: User | Member
     balls: list[BattleBall] = field(default_factory=list)
+    locked: bool = False
 
 
 @dataclass
@@ -81,13 +82,24 @@ class BattleState:
 
     player1: BattlePlayer
     player2: BattlePlayer
-    winner: User | Member
 
     turns: int = 0
     started: bool = False
     accepted: bool = False
     accept_view: BattleAcceptView | None = None
-   # max_deck_size: int = max_deck_size
+    channel: TextChannel | None = None
+    winner: User | Member | None = None
+
+    def get_user(self, user: User | Member) -> BattlePlayer | None:
+        if self.player1.user == user:
+            return self.player1
+        if self.player2.user == user:
+            return self.player2
+
+        return None
+
+
+# max_deck_size: int = max_deck_size
 
 
 def attack(current_ball, opponent_balls):
@@ -125,11 +137,7 @@ def attack(current_ball, opponent_balls):
 def random_events(p1_ball, p2_ball):
     if random.randint(1, 100) <= 25:
         msg = format_random(
-            DODGE_MESSAGES,
-            a_owner=p2_ball.owner,
-            a_name=p2_ball.name,
-            d_owner=p1_ball.owner,
-            d_name=p1_ball.name,
+            DODGE_MESSAGES, a_owner=p2_ball.owner, a_name=p2_ball.name, d_owner=p1_ball.owner, d_name=p1_ball.name
         )
         return True, msg
     return False, ""
