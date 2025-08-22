@@ -231,6 +231,9 @@ class Battle(commands.GroupCog):
         for player in players:
             del self.battles[player]
 
+        if battle.last_turn:
+            await battle.last_turn.cancel()
+
         await interaction.response.send_message("Cancelled battle!")
 
     @app_commands.command()

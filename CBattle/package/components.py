@@ -162,6 +162,12 @@ class TurnView(View):
         self.message: discord.Message
         super().__init__()
 
+    async def cancel(self):
+        for child in [x for x in self.children if isinstance(x, Button)]:
+            child.disabled = True
+
+        await self.message.edit(view=self)
+
     @button(style=discord.ButtonStyle.green, label="Next Turn")
     async def next_turn_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
         await self.next_turn()
