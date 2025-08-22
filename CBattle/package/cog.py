@@ -96,7 +96,7 @@ class Battle(commands.GroupCog):
         Parameters
         ----------
         ball: countryball
-            The ball to add.
+            The countryball you want to add.
         """
         interaction_player, _ = await Player.get_or_create(discord_id=interaction.user.id)
         if interaction_player not in self.battles:
