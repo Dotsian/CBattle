@@ -143,7 +143,9 @@ class Battle(commands.GroupCog):
 
         if inst_to_remove in battle_player.balls:
             battle_player.balls.remove(inst_to_remove)
-            await interaction.response.send_message(f"`#{countryball.id}` {emj} {countryball.countryball.country} removed!", ephemeral=True)
+            await interaction.response.send_message(
+                f"`#{countryball.id}` {emj} {countryball.countryball.country} removed!", ephemeral=True
+            )
             await battle.accept_view.update()
 
         else:
