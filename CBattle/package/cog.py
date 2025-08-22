@@ -38,7 +38,7 @@ TUTORIAL = {
        f"Once you've selected them, send the command and you'll see the {settings.plural_collectible_name} pop up in "
        "the embed message! Remember, theres a certain limit of how much there can be in a deck. You can also remove "
        f"{settings.plural_collectible_name}, too, with the `/battle remove` command! Make sure to select the exact "
-       f"{settings.collectible_name} you want to remove, though." 
+       f"{settings.collectible_name} you want to remove, though."
     ),
 
     "Abilities and Such": (
@@ -189,7 +189,7 @@ class Battle(commands.GroupCog):
 
         emoji = self.bot.get_emoji(countryball.countryball.emoji_id)
 
-        if not removing_ball in battle.player.balls:
+        if removing_ball not in battle.player.balls:
             await interaction.response.send_message("This ball is not in your deck!", ephemeral=True)
             return
 
