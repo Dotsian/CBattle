@@ -23,24 +23,21 @@ TUTORIAL = {
         "start a battle, get taught abilities, how to win, making decks and even studying the basics of a fight, so get"
         " ready to brawl in this amazing extension of battling, CBattle!!!"
     ),
-
     "Starting a Battle": (
         "To initiate a battle, you can type `/battle start`. Click on it, then you will see a parameter asking for what"
         " user you'd like to challenge. Click it, and if you already see them on the list, perfect! Click on them and "
         "send the message. If you dont, search for their user by typing their name in the message bar and clicking "
         "their name. Then, the opponent will get mentioned and once they've arrived, the battle will commence."
     ),
-
     "All About Decks": (
-       f"Decks are the #1 most important thing in CBattling. You know how in {settings.bot_name}, you can catch "
-       f"{settings.plural_collectible_name}? Well with decks, you can finally put them to the test! By using "
-       f"`/battle add`, you can search and select from your inventory of {settings.plural_collectible_name}. "
-       f"Once you've selected them, send the command and you'll see the {settings.plural_collectible_name} pop up in "
-       "the embed message! Remember, theres a certain limit of how much there can be in a deck. You can also remove "
-       f"{settings.plural_collectible_name}, too, with the `/battle remove` command! Make sure to select the exact "
-       f"{settings.collectible_name} you want to remove, though."
+        f"Decks are the #1 most important thing in CBattling. You know how in {settings.bot_name}, you can catch "
+        f"{settings.plural_collectible_name}? Well with decks, you can finally put them to the test! By using "
+        f"`/battle add`, you can search and select from your inventory of {settings.plural_collectible_name}. "
+        f"Once you've selected them, send the command and you'll see the {settings.plural_collectible_name} pop up in "
+        "the embed message! Remember, theres a certain limit of how much there can be in a deck. You can also remove "
+        f"{settings.plural_collectible_name}, too, with the `/battle remove` command! Make sure to select the exact "
+        f"{settings.collectible_name} you want to remove, though."
     ),
-
     "Abilities and Such": (
         f"If you've ever seen a {settings.plural_collectible_name} card before, you'd know they have special abilities,"
         " like poison, burst damage, healing and shielding! And yes, in CBattling, this all works! When it is your turn"
@@ -50,14 +47,13 @@ TUTORIAL = {
         "so they'd just say it did damage, but it could also say it healed something or gave paralyzation or even one "
         "shot something! I think you get it now!"
     ),
-
     "Winning and Losing": (
         "Winning and losing. It happens to all of us! But you are a WINNER. If you have all your cards gray, "
         f"unfortunately, you have been defeated, but that doesnt mean give up! Your {settings.plural_collectible_name} "
         "are still alive, so you can fight all you want and train to become the CBattle champion. If all the opponents "
         "cards are gray, however, then congrats, soldier, then you have done it! You are the ultimate warrior! Maybe "
         "you'll earn a cookie. Keep battling other worthy opponents in search of mastering... CBattle!!!"
-    )
+    ),
 }
 
 THUMBNAILS = [
@@ -74,6 +70,7 @@ THUMBNAILS = [
     # page 6: trophy
     "https://th.bing.com/th/id/R.a5b17534342efbc6b3d1c9689255c7b7?rik=9u%2fKoEzC1XQ1jw&pid=ImgRaw&r=0",
 ]
+
 
 class Battle(commands.GroupCog):
     """
@@ -97,9 +94,7 @@ class Battle(commands.GroupCog):
                 thumbnail = THUMBNAILS[page_num]
 
                 embed = discord.Embed(
-                    title=f"Tutorial Page {page_num + 1}: {title}",
-                    description=description,
-                    color=discord.Color.red(),
+                    title=f"Tutorial Page {page_num + 1}: {title}", description=description, color=discord.Color.red()
                 )
 
                 embed.set_thumbnail(url=thumbnail)
@@ -189,7 +184,7 @@ class Battle(commands.GroupCog):
 
         emoji = self.bot.get_emoji(countryball.countryball.emoji_id)
 
-        if removing_ball not in battle.player.balls:
+        if removing_ball not in battle_player.balls:
             await interaction.response.send_message("This ball is not in your deck!", ephemeral=True)
             return
 
