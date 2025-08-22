@@ -102,12 +102,23 @@ class BattleAcceptView(View):
         super().__init__()
 
     def get_embed(self) -> Embed:
-        embed = Embed()
-        embed.description = "<Placeholder>"
-        for ball in self.battle.player1.balls:
-            embed.description += ball.model.countryball.country
-        for ball in self.battle.player2.balls:
-            embed.description += ball.model.countryball.country
+        embed = (
+            Embed(
+                color=10181046,
+                title="Battle planning",
+                description="Add or remove battle balls with /battle add and /battle remove commands.",
+            )
+            .add_field(
+                name=self.battle.player1.user.name,
+                value="\n".join(ball.model.to_string() for ball in self.battle.player1.balls),
+                inline=True,
+            )
+            .add_field(
+                name=self.battle.player2.user.name,
+                value="\n".join(ball.model.to_string() for ball in self.battle.player2.balls),
+                inline=True,
+            )
+        )
 
         return embed
 

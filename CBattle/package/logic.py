@@ -8,6 +8,8 @@ from ballsdex.core.models import BallInstance, Player
 from .customs.base import BaseEffect
 
 if TYPE_CHECKING:
+    from discord import Member, User
+
     from .components import BattleAcceptView
 
 
@@ -41,6 +43,7 @@ class BattlePlayer:
     """
 
     model: Player
+    user: User | Member
     balls: list[BattleBall] = field(default_factory=list)
 
 

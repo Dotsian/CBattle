@@ -175,7 +175,7 @@ class Battle(commands.GroupCog):
 
         embed.set_footer(text="Battle request will expire in 1 minute.")
 
-        battle = BattleState(BattlePlayer(model=player1), BattlePlayer(model=player2))
+        battle = BattleState(BattlePlayer(model=player1, user=interaction.user), BattlePlayer(model=player2, user=user))
         self.battles[player1] = battle
 
         view = BattleStartView(interaction, user, battle, self.battles)
