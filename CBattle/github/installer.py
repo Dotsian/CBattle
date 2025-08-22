@@ -465,7 +465,7 @@ class Installer:
 
     async def uninstall(self):
 
-        shutil.make_archive("customs.zip", 'zip', f"{config.path}/customs")
+        shutil.make_archive("/temp/customs", 'zip', f"{config.path}/customs")
 
         await channel.send(  # type: ignore
             f"Configuration file attached for {config.name} uninstallation",
