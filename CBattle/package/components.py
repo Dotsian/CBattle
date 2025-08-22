@@ -71,7 +71,7 @@ class BattleStartView(View):
         view = BattleAcceptView(self.battle)
         self.battle.accept_view = view
 
-        message = await interaction.channel.send(view=view, embed=view.get_embed())
+        message = await self.battle.channel.send(view=view, embed=view.get_embed())
         view.message = message
 
     @button(style=discord.ButtonStyle.red, label="Decline")
@@ -110,12 +110,12 @@ class BattleAcceptView(View):
                 description="Add or remove battle balls with /battle add and /battle remove commands.",
             )
             .add_field(
-                name=self.battle.player1.user.name,
+                name=self.battle.player1.user.name + ("🔒" if self.battle.player1.locked else ""),
                 value="\n".join(" - " + ball.model.to_string() for ball in self.battle.player1.balls),
                 inline=True,
             )
             .add_field(
-                name=self.battle.player2.user.name,
+                name=self.battle.player2.user.name + ("🔒" if self.battle.player2.locked else ""),
                 value="\n".join(" - " + ball.model.to_string() for ball in self.battle.player2.balls),
                 inline=True,
             )
@@ -123,5 +123,59 @@ class BattleAcceptView(View):
 
         return embed
 
+    @button(style=discord.ButtonStyle.green, label="🔒Lock")
+    async def lock_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
+        battle_player = self.battle.get_user(interaction.user)
+        if battle_player is None:
+            await interaction.response.send_message("You are not in this battle!")
+            return
+
+        if battle_player.locked:
+            await interaction.response.send_message(
+                f"{interaction.user.mention} You've already locked.", ephemeral=True
+            )
+            return
+
+        battle_player.locked = True
+        await interaction.response.send_message(f"{interaction.user.mention} locked!")
+        await self.update()
+
+        if not (self.battle.player1.locked and self.battle.player2.locked):
+            return
+
+        self.battle.started = True
+
+        button.disabled = True
+
+        view = TurnView(self.battle)
+        message = await self.battle.channel.send("<Placeholder>", view=view)
+        self.battle.last_turn = view
+        view.message = message
+
     async def update(self):
         await self.message.edit(view=self, embed=self.get_embed())
+
+
+class TurnView(View):
+    def __init__(self, battle: BattleState):
+        self.battle: BattleState = battle
+        self.message: discord.Message
+        super().__init__()
+
+    async def cancel(self):
+        for child in [x for x in self.children if isinstance(x, Button)]:
+            child.disabled = True
+
+        await self.message.edit(view=self)
+
+    @button(style=discord.ButtonStyle.green, label="Next Turn")
+    async def next_turn_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
+        await self.next_turn()
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+
+    async def next_turn(self):
+        view = TurnView(battle=self.battle)
+        message = await self.battle.channel.send("<Placeholder>", view=view)
+        self.battle.last_turn = view
+        view.message = message

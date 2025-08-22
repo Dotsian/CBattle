@@ -10,9 +10,9 @@ from .base import BaseEffect
 # from .config import max_deck_size
 
 if TYPE_CHECKING:
-    from discord import Member, User
+    from discord import Channel, Member, User
 
-    from .components import BattleAcceptView
+    from .components import BattleAcceptView, TurnView
 
 
 @dataclass
@@ -51,6 +51,7 @@ class BattlePlayer:
     model: Player
     user: User | Member
     balls: list[BattleBall] = field(default_factory=list)
+    locked: bool = False
 
 
 @dataclass
@@ -61,10 +62,20 @@ class BattleState:
 
     player1: BattlePlayer
     player2: BattlePlayer
+    channel: Channel
 
     turns: int = 0
     started: bool = False
     accepted: bool = False
     winner: str = ""
     accept_view: BattleAcceptView | None = None
+    last_turn: TurnView | None = None
     # max_deck_size: int = max_deck_size
+
+    def get_user(self, user: User | Member) -> BattlePlayer | None:
+        if self.player1.user == user:
+            return self.player1
+        if self.player2.user == user:
+            return self.player2
+
+        return None
