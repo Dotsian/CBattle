@@ -197,6 +197,24 @@ class Battle(commands.GroupCog):
         await battle.accept_view.update()
 
     @app_commands.command()
+    async def cancel(self, interaction: discord.Interaction):
+        interaction_player, _ = await Player.get_or_create(discord_id=interaction.user.id)
+
+        if interaction_player not in self.battles:
+            await interaction.response.send_message("You don't have an active battle!", ephemeral=True)
+            return
+
+        battle = self.battles[interaction_player]
+        if battle.accept_view:
+            await battle.accept_view.message.edit(content="This battle was cancelled.")
+
+        players = [battle.player1.model, battle.player2.model]
+        for player in players:
+            del self.battles[player]
+
+        await interaction.response.send_message("Cancelled battle!")
+
+    @app_commands.command()
     async def start(self, interaction: discord.Interaction, user: discord.User):
         """
         Starts a battle with a user.
