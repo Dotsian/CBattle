@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 
 from ballsdex.core.models import BallInstance, Player
 
-from .customs.base import BaseEffect
+from .base import BaseEffect
 
 if TYPE_CHECKING:
     from discord import Member, User
