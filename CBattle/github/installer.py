@@ -468,12 +468,13 @@ class Installer:
         self.interface.embed = InstallerEmbed(self, "uninstalled")
         self.interface.view = None
 
-        self.interface.fields["attachments"] = [
-            discord.File(f"{config.path}/config.toml"),
-            discord.File(f"{config.path}/temp/customs.zip"),
-        ]
-
-        await interaction.message.edit(**self.interface.fields)
+        await interaction.message.edit(
+            attachments=[
+                discord.File(f"{config.path}/config.toml"),
+                discord.File(f"{config.path}/temp/customs.zip"),
+            ],
+            **self.interface.fields
+        )
         await interaction.response.defer()
 
         shutil.rmtree(config.path) # Scary!
