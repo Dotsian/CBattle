@@ -466,7 +466,7 @@ class Installer:
         await channel.send( # type: ignore
             f"Configuration file attached for {config.name} uninstallation",
             file=discord.File(f"{config.path}/config.toml")
-        ) 
+        )
 
         shutil.rmtree(config.path)
 
