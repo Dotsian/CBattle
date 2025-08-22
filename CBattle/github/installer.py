@@ -469,7 +469,6 @@ class Installer:
 
         files = [
             discord.File(f"{config.path}/config.toml"),
-            discord.File(f"{config.path}/customs/abilities.py"),
             discord.File(f"{config.path}/temp/customs.zip"),
         ]
 
