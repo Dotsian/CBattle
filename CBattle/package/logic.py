@@ -112,7 +112,7 @@ def attack(current_ball, opponent_balls):
             ATTACK_MESSAGES,
             a_owner=current_ball.owner,
             a_name=current_ball.name,
-            d_owner=opponet.owner,
+            d_owner=opponent.owner,
             d_name=opponent.name,
             dmg=damage,
         )
