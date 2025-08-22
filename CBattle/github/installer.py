@@ -410,7 +410,7 @@ class Installer:
         return True
 
     async def install(self):
-        def copytree_skip_existing(src: Path, dst: Path):
+        def copytree_skip_existing(src: Path, dst: Path, protect_files=None):
             src = Path(src)
             dst = Path(dst)
 
@@ -465,7 +465,8 @@ class Installer:
     async def uninstall(self):
         await channel.send(  # type: ignore
             f"Configuration file attached for {config.name} uninstallation",
-            file=discord.File(f"{config.path}/config.toml"),
+            file1=discord.File(f"{config.path}/config.toml"),
+            file2=discord.File(f"{config.path}/customs/abilities.py"),
         )
 
         shutil.rmtree(config.path)
