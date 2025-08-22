@@ -436,7 +436,7 @@ class Installer:
             async with session.get(url) as response:
                 if response.status != 200:
                     logger.log("Failed to download zip", "ERROR")
-                    return
+                    raise Exception("Installer failed")
                 logger.log("Get status code 200", "INFO")
                 data = await response.read()
                 with zipfile.ZipFile(BytesIO(data)) as zip_file:
@@ -447,7 +447,7 @@ class Installer:
         copytree_skip_existing(
             tmp_package_path / top_level_folder_name / config.folder / "package",
             target_dir,
-            protect_files=["config.toml", "customs/abilities.py"]
+            protect_files=["config.toml", "customs/abilities.py"],
         )
 
         logger.log("Inserting package in 'config.yml'", "INFO")
@@ -464,22 +464,18 @@ class Installer:
 
     async def uninstall(self, interaction: discord.Interaction):
         shutil.make_archive(f"{config.path}/temp/backupconf", "zip", f"{config.path}/customs")
-        with ZipFile(f'{config.path}/temp/backupconf.zip', 'w') as myzip:
-            myzip.write('{config.path}/config.toml', )
-
+        with zipfile.ZipFile(f"{config.path}/temp/backupconf.zip", "w") as myzip:
+            myzip.write(f"{config.path}/config.toml")
 
         self.interface.embed = InstallerEmbed(self, "uninstalled")
         self.interface.view = None
 
         await interaction.message.edit(
-            attachments=[
-                discord.File(f"{config.path}/temp/backupconf.zip"),
-            ],
-            **self.interface.fields
+            attachments=[discord.File(f"{config.path}/temp/backupconf.zip")], **self.interface.fields
         )
         await interaction.response.defer()
 
-        shutil.rmtree(config.path) # Scary!
+        shutil.rmtree(config.path)  # Scary!
 
         await bot.unload_extension(config.path.replace("/", "."))  # type: ignore
 
