@@ -1,12 +1,19 @@
+from typing import TYPE_CHECKING
+
 import discord
 from discord import app_commands
 from discord.ext import commands
 
 from ballsdex.core.models import Player
+from ballsdex.core.utils.transformers import BallInstanceTransform
 from ballsdex.settings import settings
 
 from .components import BattleStartView
+from .logic import BattleBall, BattlePlayer, BattleState
 from .pagination import TutorialPages
+
+if TYPE_CHECKING:
+    from ballsdex.core.bot import BallsDexBot
 
 
 class Battle(commands.GroupCog):
@@ -16,6 +23,7 @@ class Battle(commands.GroupCog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.battles: dict[Player, BattleState] = {}
 
     @app_commands.command()
     async def tutorial(self, interaction: discord.Interaction):
@@ -81,6 +89,35 @@ class Battle(commands.GroupCog):
         await interaction.response.send_message(embed=embed, view=view)
 
     @app_commands.command()
+    async def add(self, interaction: discord.Interaction["BallsDexBot"], countryball: BallInstanceTransform):
+        interaction_player, _ = await Player.get_or_create(discord_id=interaction.user.id)
+        if interaction_player not in self.battles:
+            await interaction.response.send_message("You don't have an active battle!", ephemeral=True)
+            return
+
+        battle = self.battles[interaction_player]
+
+        if not battle.accepted:
+            await interaction.response.send_message(
+                "You can't add a ball until the battle is accepted!", ephemeral=True
+            )
+            return
+
+        if battle.player1.model == interaction_player:
+            battle_player = battle.player1
+        else:
+            battle_player = battle.player2
+
+        battleball = BattleBall.from_ballinstance(countryball)
+        if battleball in battle_player.balls:
+            await interaction.response.send_message("You've already added this ball to the battle!", ephemeral=True)
+            return
+
+        battle_player.balls.append(BattleBall.from_ballinstance(countryball))
+        await interaction.response.send_message(f"{countryball.countryball.country} added!", ephemeral=True)
+        await battle.accept_view.update()
+
+    @app_commands.command()
     async def start(self, interaction: discord.Interaction, user: discord.User):
         """
         Starts a battle with a user.
@@ -120,6 +157,17 @@ class Battle(commands.GroupCog):
             )
             return
 
+        if player1 in self.battles:
+            await interaction.response.send_message(
+                "You cannot start a battle while you have an active battle or battle request", ephemeral=True
+            )
+            return
+        if player2 in self.battles:
+            await interaction.response.send_message(
+                "You cannot start a battle with a player already in a battle", ephemeral=True
+            )
+            return
+
         embed = discord.Embed(
             title="Battle Request!",
             description=f"{user.mention}, {interaction.user.mention} has invited you to a battle!",
@@ -127,5 +175,9 @@ class Battle(commands.GroupCog):
 
         embed.set_footer(text="Battle request will expire in 1 minute.")
 
-        view = BattleStartView(interaction, user)
+        battle = BattleState(BattlePlayer(model=player1), BattlePlayer(model=player2))
+        self.battles[player1] = battle
+
+        view = BattleStartView(interaction, user, battle, self.battles)
+
         await interaction.response.send_message(view=view, embed=embed)
