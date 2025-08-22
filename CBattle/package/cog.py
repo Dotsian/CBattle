@@ -91,7 +91,7 @@ class Battle(commands.GroupCog):
     @app_commands.command()
     async def add(self, interaction: discord.Interaction["BallsDexBot"], countryball: BallInstanceTransform):
         """
-        Adds a ball from the battle..
+        Adds a countryball to the battle.
 
         Parameters
         ----------
