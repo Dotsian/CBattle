@@ -467,11 +467,12 @@ class Installer:
 
         shutil.make_archive(f"{config.path}/temp/customs", 'zip', f"{config.path}/customs")
 
+        backups=[]
+        backups.append(discord.File(f"{config.path}/config.toml"))
+        backups.append(discord.File(f"{config.path}/temp/customs.zip"))
         await channel.send(  # type: ignore
             f"Configuration file attached for {config.name} uninstallation",
-            file1=discord.File(f"{config.path}/config.toml"),
-            file2=discord.File(f"{config.path}/customs/abilities.py"),
-            file3=discord.File(f"{config.path}/temp/customs.zip"),
+            files=backups
         )
 
         os.remove(f"{config.path}/temp/customs.zip")
