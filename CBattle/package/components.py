@@ -110,12 +110,12 @@ class BattleAcceptView(View):
             )
             .add_field(
                 name=self.battle.player1.user.name,
-                value="\n".join(ball.model.to_string() for ball in self.battle.player1.balls),
+                value="\n".join(" - " + ball.model.to_string() for ball in self.battle.player1.balls),
                 inline=True,
             )
             .add_field(
                 name=self.battle.player2.user.name,
-                value="\n".join(ball.model.to_string() for ball in self.battle.player2.balls),
+                value="\n".join(" - " + ball.model.to_string() for ball in self.battle.player2.balls),
                 inline=True,
             )
         )
