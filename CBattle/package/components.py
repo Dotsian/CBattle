@@ -31,13 +31,14 @@ class BattleStartView(View):
         for child in [x for x in self.children if isinstance(x, Button)]:
             child.disabled = True
 
-        start_player, _ = await Player.get_or_create(discord_id=self.start_player.id)
-        del self.battles[start_player]
-
         if not self.battle.accepted:
             embed = Embed()
             embed.description = "Battle request timed out."
             embed.set_footer(text="")
+
+            start_player, _ = await Player.get_or_create(discord_id=self.start_player.id)
+            del self.battles[start_player]
+
             await self.interaction.edit_original_response(embed=embed, view=self)
 
         return await super().on_timeout()
