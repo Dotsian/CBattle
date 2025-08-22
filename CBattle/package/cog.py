@@ -137,7 +137,7 @@ class Battle(commands.GroupCog):
         else:
             battle_player = battle.player2
 
-        inst_to_remove = BattleBall.from_ballinstance(countryball))
+        inst_to_remove = BattleBall.from_ballinstance(countryball)
 
         emj = self.bot.get_emoji(countryball.countryball.emoji_id)
 
