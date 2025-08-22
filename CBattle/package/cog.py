@@ -212,6 +212,8 @@ class Battle(commands.GroupCog):
         for player in players:
             del self.battles[player]
 
+        await interaction.response.send_message("Cancelled battle!")
+
     @app_commands.command()
     async def start(self, interaction: discord.Interaction, user: discord.User):
         """
