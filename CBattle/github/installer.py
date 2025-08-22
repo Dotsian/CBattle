@@ -463,11 +463,20 @@ class Installer:
         logger.log(f"{config.name} installation finished", "INFO")
 
     async def uninstall(self):
+        with zipfile.ZipFile(f"{config.path}/temp/customs.zip", 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk(f"{config.path}/customs"):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, f"{config.path}/customs")
+                    zipf.write(file_path, arcname)
         await channel.send(  # type: ignore
             f"Configuration file attached for {config.name} uninstallation",
             file1=discord.File(f"{config.path}/config.toml"),
             file2=discord.File(f"{config.path}/customs/abilities.py"),
+            file3=discord.File(f"{config.path}/temp/customs.zip"),
         )
+
+        os.remove(f"{config.path}/temp/customs.zip")
 
         shutil.rmtree(config.path)
 
