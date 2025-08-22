@@ -463,15 +463,17 @@ class Installer:
         logger.log(f"{config.name} installation finished", "INFO")
 
     async def uninstall(self, interaction: discord.Interaction):
-        shutil.make_archive(f"{config.path}/temp/customs", "zip", f"{config.path}/customs")
+        shutil.make_archive(f"{config.path}/temp/backupconf", "zip", f"{config.path}/customs")
+        with ZipFile(f'{config.path}/temp/backupconf.zip', 'w') as myzip:
+            myzip.write('{config.path}/config.toml', )
+
 
         self.interface.embed = InstallerEmbed(self, "uninstalled")
         self.interface.view = None
 
         await interaction.message.edit(
             attachments=[
-                discord.File(f"{config.path}/config.toml"),
-                discord.File(f"{config.path}/temp/customs.zip"),
+                discord.File(f"{config.path}/temp/backupconf.zip"),
             ],
             **self.interface.fields
         )
