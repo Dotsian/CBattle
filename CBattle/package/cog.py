@@ -118,6 +118,39 @@ class Battle(commands.GroupCog):
         await battle.accept_view.update()
 
     @app_commands.command()
+    async def remove(self, interaction: discord.Interaction["BallsDexBot"], countryball: BallInstanceTransform):
+        interaction_player, _ = await Player.get_or_create(discord_id=interaction.user.id)
+        if interaction_player not in self.battles:
+            await interaction.response.send_message("You don't have an active battle!", ephemeral=True)
+            return
+
+        battle = self.battles[interaction_player]
+
+        if not battle.accepted:
+            await interaction.response.send_message(
+                "You can't remove a ball until the battle is accepted!", ephemeral=True
+            )
+            return
+
+        if battle.player1.model == interaction_player:
+            battle_player = battle.player1
+        else:
+            battle_player = battle.player2
+
+        inst_to_remove = BattleBall.from_ballinstance(countryball))
+
+        emj = self.bot.get_emoji(countryball.countryball.emoji_id)
+
+        if inst_to_remove in battle_player.balls:
+            battle_player.balls.remove(inst_to_remove)
+            await interaction.response.send_message(f"`#{countryball.id}` {emj} {countryball.countryball.country} removed!", ephemeral=True)
+            await battle.accept_view.update()
+
+        else:
+            await interaction.response.send_message("This ball is not in your deck already!", ephemeral=True)
+            return
+
+    @app_commands.command()
     async def start(self, interaction: discord.Interaction, user: discord.User):
         """
         Starts a battle with a user.
