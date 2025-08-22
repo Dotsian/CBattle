@@ -90,6 +90,14 @@ class Battle(commands.GroupCog):
 
     @app_commands.command()
     async def add(self, interaction: discord.Interaction["BallsDexBot"], countryball: BallInstanceTransform):
+        """
+        Adds a countryball to the battle.
+
+        Parameters
+        ----------
+        countryball: BallInstance
+            The countryball you want to add.
+        """
         interaction_player, _ = await Player.get_or_create(discord_id=interaction.user.id)
         if interaction_player not in self.battles:
             await interaction.response.send_message("You don't have an active battle!", ephemeral=True)
@@ -114,11 +122,21 @@ class Battle(commands.GroupCog):
             return
 
         battle_player.balls.append(BattleBall.from_ballinstance(countryball))
-        await interaction.response.send_message(f"{countryball.countryball.country} added!", ephemeral=True)
+        emj = self.bot.get_emoji(countryball.countryball.emoji_id)
+        await interaction.response.send_message(f"`#{countryball.id}` {emj} {countryball.countryball.country} removed!"
+                                                , ephemeral=True)
         await battle.accept_view.update()
 
     @app_commands.command()
     async def remove(self, interaction: discord.Interaction["BallsDexBot"], countryball: BallInstanceTransform):
+        """
+        Removes a countryball from the battle.
+
+        Parameters
+        ----------
+        countryball: BallInstance
+            The countryball you want to remove.
+        """
         interaction_player, _ = await Player.get_or_create(discord_id=interaction.user.id)
         if interaction_player not in self.battles:
             await interaction.response.send_message("You don't have an active battle!", ephemeral=True)
