@@ -459,20 +459,20 @@ class Installer:
         logger.log(f"{config.name} installation finished", "INFO")
 
     async def uninstall(self, interaction: discord.Interaction):
+        shutil.make_archive(f"{config.path}/temp/customs", "zip", f"{config.path}/customs")
+
         self.installer.interface.embed = InstallerEmbed(self.installer, "uninstalled")
         self.installer.interface.view = None
 
         self.installer.interface.fields["attachments"] = [
-        discord.File(f"{config.path}/config.toml"),
-        discord.File(f"{config.path}/temp/customs.zip"),
+            discord.File(f"{config.path}/config.toml"),
+            discord.File(f"{config.path}/temp/customs.zip"),
         ]
 
         await interaction.message.edit(**self.installer.interface)
         await interaction.response.defer()
 
-        shutil.make_archive(f"{config.path}/temp/customs", "zip", f"{config.path}/customs")
-
-        shutil.rmtree(config.path)
+        shutil.rmtree(config.path) # Scary!
 
         await bot.unload_extension(config.path.replace("/", "."))  # type: ignore
 
