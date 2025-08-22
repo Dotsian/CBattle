@@ -130,7 +130,7 @@ class Battle(commands.GroupCog):
     @app_commands.command()
     async def remove(self, interaction: discord.Interaction["BallsDexBot"], countryball: BallInstanceTransform):
         """
-        Removes a ball from the battle..
+        Removes a countryball from the battle.
 
         Parameters
         ----------
