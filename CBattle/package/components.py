@@ -34,11 +34,12 @@ class BattleStartView(View):
         start_player, _ = await Player.get_or_create(discord_id=self.start_player.id)
         del self.battles[start_player]
 
-        embed = Embed()
-        embed.description = "Battle request timed out."
-        embed.set_footer(text="")
+        if not self.battle.accepted:
+            embed = Embed()
+            embed.description = "Battle request timed out."
+            embed.set_footer(text="")
+            await self.interaction.edit_original_response(embed=embed, view=self)
 
-        await self.interaction.edit_original_response(embed=embed, view=self)
         return await super().on_timeout()
 
     @button(style=discord.ButtonStyle.primary, label="Accept")
