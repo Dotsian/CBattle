@@ -183,13 +183,7 @@ class InstallerView(discord.ui.View):
 
     @discord.ui.button(style=discord.ButtonStyle.primary, label="Uninstall", disabled=not UPDATING)
     async def uninstall_button(self, interaction: discord.Interaction, _: discord.ui.Button):
-        await self.installer.uninstall()
-
-        self.installer.interface.embed = InstallerEmbed(self.installer, "uninstalled")
-        self.installer.interface.view = None
-
-        await interaction.message.edit(**self.installer.interface.fields)
-        await interaction.response.defer()
+        await self.installer.uninstall(interaction)
 
     @discord.ui.button(
         style=discord.ButtonStyle.secondary, label="Config", disabled=not os.path.isfile(f"{config.path}/config.toml")
@@ -464,7 +458,13 @@ class Installer:
 
         logger.log(f"{config.name} installation finished", "INFO")
 
-    async def uninstall(self):
+    async def uninstall(self, interaction: discord.Interaction):
+        self.installer.interface.embed = InstallerEmbed(self.installer, "uninstalled")
+        self.installer.interface.view = None
+
+        await interaction.message.edit(**self.installer.interface.fields)
+        await interaction.response.defer()
+
         shutil.make_archive(f"{config.path}/temp/customs", "zip", f"{config.path}/customs")
 
         await channel.send(  # type: ignore
