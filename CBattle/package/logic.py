@@ -11,7 +11,7 @@ from .base import BaseEffect
 if TYPE_CHECKING:
     from discord import Member, TextChannel, User
 
-    from .components import BattleAcceptView
+    from .components import BattleAcceptView, TurnView
 
 ATTACK_MESSAGES = [
     "{a_owner}'s {a_name} attacks {d_owner}'s {d_name} for {dmg} DMG!",
@@ -94,6 +94,7 @@ class BattleState:
     channel: TextChannel | None = None
     winner: BattlePlayer | None = None
     gen_battle: Generator[str] | None = None
+    last_turn: TurnView | None = None
 
     def start(self):
         if self.started:
@@ -173,10 +174,10 @@ def gen_battle(battle: BattleState):
 
                 event = random_events(p1_ball, p2_ball)
                 if event[0]:
-                    yield f"Turn {turn}: {event[1]}"
+                    yield event[1]
                     continue
 
-                yield f"Turn {turn}: {attack(p1_ball, battle.player2.balls)}"
+                yield attack(p1_ball, battle.player2.balls)
 
                 if all(ball.dead for ball in battle.player2.balls):
                     break
@@ -186,10 +187,10 @@ def gen_battle(battle: BattleState):
 
                 event = random_events(p2_ball, p1_ball)
                 if event[0]:
-                    yield f"Turn {turn}: {event[1]}"
+                    yield event[1]
                     continue
 
-                yield f"Turn {turn}: {attack(p2_ball, battle.player1.balls)}"
+                yield attack(p2_ball, battle.player1.balls)
 
                 if all(ball.dead for ball in battle.player1.balls):
                     break
