@@ -4,7 +4,7 @@ import random
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Generator, Type
 
-from config import Config
+from .config import config
 
 from ballsdex.core.models import BallInstance, Player
 
