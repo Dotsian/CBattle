@@ -171,6 +171,9 @@ class TurnView(View):
 
     @button(style=discord.ButtonStyle.green, label="Next Turn")
     async def next_turn_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
+        if interaction.user.id != self.battle.player1.user.id and interaction.user.id != self.battle.player2.user.id:
+            await interaction.response.send_message("Your not apart of this battle.", ephemeral=True)
+            return
         await self.next_turn()
         button.disabled = True
         await interaction.response.edit_message(view=self)
