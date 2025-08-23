@@ -171,21 +171,42 @@ class TurnView(View):
 
     @button(style=discord.ButtonStyle.green, label="Next Turn")
     async def next_turn_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
-        if interaction.user.id != self.battle.player1.user.id and interaction.user.id != self.battle.player2.user.id:
+        if interaction.user != self.battle.player1.user and interaction.user != self.battle.player2.user:
             await interaction.response.send_message("You're not a part of this battle.", ephemeral=True)
             return
-        await self.next_turn()
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
+        await self.next_turn(interaction)
 
-    async def next_turn(self):
+    async def next_turn(self, interaction: discord.Interaction):
         if not self.battle.gen_battle:
             return
         try:
             next_round = next(self.battle.gen_battle)
-            view = TurnView(battle=self.battle)
-            message = await self.battle.channel.send(next_round, view=view)
-            self.battle.last_turn = view
-            view.message = message
+            await interaction.response.edit_message(
+                content=next_round + "\n**Status**\n" + self.get_battle_status(), view=self
+            )
         except StopIteration:
             await self.battle.channel.send(f"Battle finished! Winner: {self.battle.winner.user.mention}")
+            for child in [x for x in self.children if isinstance(x, Button)]:
+                child.disabled = True
+            await interaction.response.edit_message(view=self)
+
+    def get_battle_status(self) -> str:
+        lines = []
+        lines.append(str(self.battle.player1))
+        for ball in self.battle.player1.balls:
+            if ball.dead:
+                status = "💀"
+            else:
+                status = f"❤️ {ball.health} | ⚔️ {ball.model.countryball.attack}"
+            lines.append(f"- {ball.model.countryball.country} ({status})")
+
+        lines.append("")
+        lines.append(str(self.battle.player2))
+        for ball in self.battle.player2.balls:
+            if ball.dead:
+                status = "💀"
+            else:
+                status = f"❤️ {ball.health} | ⚔️ {ball.model.countryball.attack}"
+            lines.append(f"- {ball.model.countryball.country} ({status})")
+
+        return "\n".join(lines)

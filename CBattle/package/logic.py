@@ -45,14 +45,15 @@ class BattleBall:
     """
 
     model: BallInstance
+    owner: BattlePlayer
     health: int
     dead: bool = False
 
     effects: list[BaseEffect] = field(default_factory=list)
 
     @classmethod
-    def from_ballinstance(cls, ballinstance: BallInstance):
-        return cls(model=ballinstance, health=ballinstance.health)
+    def from_ballinstance(cls, ballinstance: BallInstance, owner: BattlePlayer):
+        return cls(model=ballinstance, health=ballinstance.health, owner=owner)
 
     @property
     def damage(self):
@@ -73,6 +74,9 @@ class BattlePlayer:
     balls: list[BattleBall] = field(default_factory=list)
     locked: bool = False
 
+    def __str__(self) -> str:
+        return self.user.name
+
 
 @dataclass
 class BattleState:
@@ -83,7 +87,7 @@ class BattleState:
     player1: BattlePlayer
     player2: BattlePlayer
 
-    turns: int = 0
+    round_number: int = 0
     started: bool = False
     accepted: bool = False
     accept_view: BattleAcceptView | None = None
@@ -109,7 +113,7 @@ class BattleState:
 # max_deck_size: int = max_deck_size
 
 
-def attack(current_ball, opponent_balls):
+def attack(current_ball: BattleBall, opponent_balls: list[BattleBall]):
     alive_balls = [ball for ball in opponent_balls if not ball.dead]
     opponent = random.choice(alive_balls)
 
@@ -123,28 +127,32 @@ def attack(current_ball, opponent_balls):
         text = format_random(
             DEFEAT_MESSAGES,
             a_owner=current_ball.owner,
-            a_name=current_ball.name,
+            a_name=current_ball.model.countryball.country,
             d_owner=opponent.owner,
-            d_name=opponent.name,
+            d_name=opponent.model.countryball.country,
             dmg=damage,
         )
     else:
         text = format_random(
             ATTACK_MESSAGES,
             a_owner=current_ball.owner,
-            a_name=current_ball.name,
+            a_name=current_ball.model.countryball.country,
             d_owner=opponent.owner,
-            d_name=opponent.name,
+            d_name=opponent.model.countryball.country,
             dmg=damage,
         )
 
     return text
 
 
-def random_events(p1_ball, p2_ball):
+def random_events(p1_ball: BattleBall, p2_ball: BattleBall):
     if random.randint(1, 100) <= 25:
         msg = format_random(
-            DODGE_MESSAGES, a_owner=p2_ball.owner, a_name=p2_ball.name, d_owner=p1_ball.owner, d_name=p1_ball.name
+            DODGE_MESSAGES,
+            a_owner=p2_ball.owner,
+            a_name=p2_ball.model.countryball.country,
+            d_owner=p1_ball.owner,
+            d_name=p1_ball.model.countryball.country,
         )
         return True, msg
     return False, ""
@@ -191,4 +199,4 @@ def gen_battle(battle: BattleState):
     elif all(ball.dead for ball in battle.player2.balls):
         battle.winner = battle.player1
 
-    battle.turns = turn
+    battle.round_number = turn

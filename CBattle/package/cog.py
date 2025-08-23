@@ -149,13 +149,13 @@ class Battle(commands.GroupCog):
             await interaction.response.send_message("You can't change your deck after you've locked!", ephemeral=True)
             return
 
-        battleball = BattleBall.from_ballinstance(countryball)
+        battleball = BattleBall.from_ballinstance(countryball, battle_player)
 
         if battleball in battle_player.balls:
             await interaction.response.send_message("You've already added this ball to your deck!", ephemeral=True)
             return
 
-        battle_player.balls.append(BattleBall.from_ballinstance(countryball))
+        battle_player.balls.append(BattleBall.from_ballinstance(countryball, battle_player))
         emoji = self.bot.get_emoji(countryball.countryball.emoji_id)
 
         await interaction.response.send_message(
