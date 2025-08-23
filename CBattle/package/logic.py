@@ -4,6 +4,8 @@ import random
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Generator, Type
 
+from config import Config
+
 from ballsdex.core.models import BallInstance, Player
 
 from .base import BaseEffect
@@ -11,27 +13,13 @@ from .base import BaseEffect
 if TYPE_CHECKING:
     from discord import Member, TextChannel, User
 
-    from .components import BattleAcceptView, TurnView
+    from .components import BattleAcceptView
 
-ATTACK_MESSAGES = [
-    "{a_owner}'s {a_name} attacks {d_owner}'s {d_name} for {dmg} DMG!",
-    "{a_name} uppercuts {d_name}, dealing {dmg} DMG!",
-    "{a_owner}'s {a_name} slices {d_name}! ({dmg} DMG)",
-    "{a_name} lands a solid blow on {d_name} for {dmg} DMG",
-]
+ATTACK_MESSAGES = Config.attack_messages
 
-DEFEAT_MESSAGES = [
-    "{a_name} has easily crushed {d_name}!",
-    "{d_owner}'s {d_name} has fallen to {a_owner}'s {a_name}.",
-    "{a_name} knocks out {d_name}!",
-    "{d_name} has been defeated!",
-]
+DEFEAT_MESSAGES = Config.defeat_messages
 
-DODGE_MESSAGES = [
-    "{a_name} tries to land a blow, but {d_name} dodges!",
-    "{d_owner}'s {d_name} evades {a_owner}'s {a_name} attack!",
-    "{d_name} sidesteps the attack!",
-]
+DODGE_MESSAGES = Config.dodge_messages
 
 
 def format_random(msg_list, **kwargs):
