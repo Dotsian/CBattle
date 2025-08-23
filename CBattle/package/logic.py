@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Generator, Type
 
 from ballsdex.core.models import BallInstance, Player
 
@@ -88,7 +88,14 @@ class BattleState:
     accepted: bool = False
     accept_view: BattleAcceptView | None = None
     channel: TextChannel | None = None
-    winner: User | Member | None = None
+    winner: BattlePlayer | None = None
+    gen_battle: Generator[str] | None = None
+
+    def start(self):
+        if self.started:
+            return
+        self.started = True
+        self.gen_battle = gen_battle(self)
 
     def get_user(self, user: User | Member) -> BattlePlayer | None:
         if self.player1.user == user:
@@ -180,8 +187,8 @@ def gen_battle(battle: BattleState):
                     break
 
     if all(ball.dead for ball in battle.player1.balls):
-        battle.winner = battle.player2.user
+        battle.winner = battle.player2
     elif all(ball.dead for ball in battle.player2.balls):
-        battle.winner = battle.player1.user
+        battle.winner = battle.player1
 
     battle.turns = turn

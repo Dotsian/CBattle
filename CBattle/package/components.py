@@ -144,12 +144,12 @@ class BattleAcceptView(View):
         if not (self.battle.player1.locked and self.battle.player2.locked):
             return
 
-        self.battle.started = True
+        self.battle.start()
 
         button.disabled = True
 
         view = TurnView(self.battle)
-        message = await self.battle.channel.send("<Placeholder>", view=view)
+        message = await self.battle.channel.send('Press "Next Turn" to start the battle!', view=view)
         self.battle.last_turn = view
         view.message = message
 
@@ -179,7 +179,13 @@ class TurnView(View):
         await interaction.response.edit_message(view=self)
 
     async def next_turn(self):
-        view = TurnView(battle=self.battle)
-        message = await self.battle.channel.send("<Placeholder>", view=view)
-        self.battle.last_turn = view
-        view.message = message
+        if not self.battle.gen_battle:
+            return
+        try:
+            next_round = next(self.battle.gen_battle)
+            view = TurnView(battle=self.battle)
+            message = await self.battle.channel.send(next_round, view=view)
+            self.battle.last_turn = view
+            view.message = message
+        except StopIteration:
+            await self.battle.channel.send(f"Battle finished! Winner: {self.battle.winner.user.mention}")
