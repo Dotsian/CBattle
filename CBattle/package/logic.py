@@ -4,22 +4,15 @@ import random
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Generator, Type
 
-from .config import config
-
 from ballsdex.core.models import BallInstance, Player
 
 from .base import BaseEffect
+from .config import config
 
 if TYPE_CHECKING:
     from discord import Member, TextChannel, User
 
     from .components import BattleAcceptView, TurnView
-
-ATTACK_MESSAGES = Config.attack_messages
-
-DEFEAT_MESSAGES = Config.defeat_messages
-
-DODGE_MESSAGES = Config.dodge_messages
 
 
 
@@ -117,7 +110,7 @@ def attack(current_ball: BattleBall, opponent_balls: list[BattleBall]):
 
     if opponent.dead:
         text = format_random(
-            DEFEAT_MESSAGES,
+            config.defeat_messages,
             a_owner=current_ball.owner,
             a_name=current_ball.model.countryball.country,
             d_owner=opponent.owner,
@@ -126,7 +119,7 @@ def attack(current_ball: BattleBall, opponent_balls: list[BattleBall]):
         )
     else:
         text = format_random(
-            ATTACK_MESSAGES,
+            config.attack_messages,
             a_owner=current_ball.owner,
             a_name=current_ball.model.countryball.country,
             d_owner=opponent.owner,
@@ -140,7 +133,7 @@ def attack(current_ball: BattleBall, opponent_balls: list[BattleBall]):
 def random_events(p1_ball: BattleBall, p2_ball: BattleBall):
     if random.randint(1, 100) <= 25:
         msg = format_random(
-            DODGE_MESSAGES,
+            config.dodge_messages,
             a_owner=p2_ball.owner,
             a_name=p2_ball.model.countryball.country,
             d_owner=p1_ball.owner,
