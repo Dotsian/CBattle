@@ -13,13 +13,16 @@ from .base import BaseEffect
 if TYPE_CHECKING:
     from discord import Member, TextChannel, User
 
-    from .components import BattleAcceptView
+    from .components import BattleAcceptView, TurnView
 
 ATTACK_MESSAGES = Config.attack_messages
 
 DEFEAT_MESSAGES = Config.defeat_messages
 
 DODGE_MESSAGES = Config.dodge_messages
+
+
+
 
 
 def format_random(msg_list, **kwargs):
