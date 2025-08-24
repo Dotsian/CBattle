@@ -171,24 +171,34 @@ class TurnView(View):
 
     @button(style=discord.ButtonStyle.green, label="Next Turn")
     async def next_turn_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
+        if self.battle.last_turn != self:
+            await self.message.delete()
+            await interaction.response.send_message("Oops, I am not supposed to exist", ephemeral=True)
+
         if interaction.user != self.battle.player1.user and interaction.user != self.battle.player2.user:
             await interaction.response.send_message("You're not a part of this battle.", ephemeral=True)
             return
         await self.next_turn(interaction)
 
     async def next_turn(self, interaction: discord.Interaction):
-        if not self.battle.gen_battle:
-            return
-        try:
-            next_round = next(self.battle.gen_battle)
-        except StopIteration:
-            next_round = "Battle finished!"
-            await self.battle.channel.send(f"Battle finished! Winner: {self.battle.winner.user.mention}")
+        # This works well, but until we have actual interactivity it's just annoying
+        # Once abilities & attack choices are there, then we can uncomment the following block
+
+        # if not interaction.user == self.battle.active_player.user:
+        #     await interaction.response.send_message("It's not your turn!", ephemeral=True)
+        #     return
+
+        next_round = self.battle.next_round()
+        if isinstance(next_round, BattlePlayer):
+            await self.battle.channel.send(f"Battle finished! Winner: {next_round.user.mention}")
             for child in [x for x in self.children if isinstance(x, Button)]:
                 child.disabled = True
 
         embed = (
-            discord.Embed(title=f"Turn {self.battle.round_number}", description=next_round)
+            discord.Embed(
+                title=f"{self.battle.active_player.user.name}'s Turn! ({self.battle.round_number})",
+                description=next_round,
+            )
             .set_footer(text="CBattle")
             .add_field(
                 name=self.battle.player1.user.name, value=self.get_battle_status(self.battle.player1), inline=True
@@ -205,7 +215,7 @@ class TurnView(View):
             if ball.dead:
                 status = "💀"
             else:
-                status = f"❤️ {ball.health} | ⚔️ {ball.model.countryball.attack}"
+                status = f"❤️ {ball.health} | ⚔️ {ball.attack}"
             lines.append(f"- {ball.model.countryball.country} ({status})")
 
         return "\n".join(lines)

@@ -1,5 +1,10 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Any, final
+from typing import TYPE_CHECKING, Any, final
+
+if TYPE_CHECKING:
+    from .logic import BattleBall
 
 
 @dataclass
@@ -8,7 +13,7 @@ class BaseAbility:
     Base ability class for all custom abilities.
     """
 
-    ball: Any
+    ball: BattleBall
 
     passive: bool = False
     usable: int = 0
@@ -44,7 +49,7 @@ class BaseAbility:
         return True
 
     def fetch_damage(self, opponent_ball) -> int:
-        return self.ball.damage
+        return self.ball.attack
 
 
 @dataclass
@@ -53,7 +58,7 @@ class BaseEffect:
     Base effect class for handling custom effects.
     """
 
-    ball: Any
+    ball: BattleBall
     rounds: int
 
     rounds_since: int = 0
@@ -68,13 +73,13 @@ class BaseEffect:
 
         if self.rounds_since < self.rounds:
             self.active = False
-            self.ball.effect = None
+            self.ball.effects.remove(self)
 
     def choose_ball(self) -> bool:
         return True
 
     def fetch_damage(self, opponent_ball: Any) -> int:
-        return self.ball.damage
+        return self.ball.attack
 
-    def round_passed(self, round_number: int):
+    def round_passed(self, round_number):
         self.process_round()

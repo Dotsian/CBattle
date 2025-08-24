@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Generator, Type
+from typing import TYPE_CHECKING, Type
 
 from ballsdex.core.models import BallInstance, Player
 
@@ -13,9 +13,6 @@ if TYPE_CHECKING:
     from discord import Member, TextChannel, User
 
     from .components import BattleAcceptView, TurnView
-
-
-
 
 
 def format_random(msg_list, **kwargs):
@@ -30,21 +27,65 @@ class BattleBall:
 
     model: BallInstance
     owner: BattlePlayer
+
     health: int
+    attack: int
+
+    evasion: float = 0.25
+    crit_chance: float = 0.2
     dead: bool = False
 
-    effects: list[BaseEffect] = field(default_factory=list)
+    effects: set[BaseEffect] = field(default_factory=set)
 
     @classmethod
     def from_ballinstance(cls, ballinstance: BallInstance, owner: BattlePlayer):
-        return cls(model=ballinstance, health=ballinstance.health, owner=owner)
+        return cls(model=ballinstance, health=ballinstance.health, attack=ballinstance.attack, owner=owner)
+
+    def damage(self, amount: int) -> bool:
+        """Damage a BattleBall. If the damage kills the ball, returns true, otherwise returns false"""
+        self.health -= amount
+        if self.health <= 0:
+            self.dead = True
+            return True
+        return False
 
     @property
-    def damage(self):
-        return int(self.model.attack * random.uniform(0.6, 1.2))
+    def name(self) -> str:
+        return self.model.countryball.country
 
     def apply_effect(self, effect: Type[BaseEffect], rounds: int):
-        self.effects.append(effect(self, rounds))
+        self.effects.add(effect(self, rounds))
+
+    def round_passed(self, round_number):
+        for effect in self.effects:
+            effect.round_passed(round_number)
+
+    def attack_target(self, target: BattleBall) -> str:
+        if random.random() < target.evasion:
+            return random.choice(config.dodge_messages).format(
+                a_owner=self.owner, a_name=self.name, d_owner=target.owner, d_name=target.name
+            )
+
+        damage = int(self.attack * random.uniform(0.6, 1.2))
+
+        crit = False
+        if random.random() < self.crit_chance:
+            crit = True
+            damage *= 2
+
+        if target.damage(damage):
+            response = random.choice(config.defeat_messages).format(
+                a_owner=self.owner, a_name=self.name, d_owner=target.owner, d_name=target.name, dmg=damage
+            )
+        else:
+            response = random.choice(config.attack_messages).format(
+                a_owner=self.owner, a_name=self.name, d_owner=target.owner, d_name=target.name, dmg=damage
+            )
+
+        if crit:
+            response += "\nIt's a critical hit!"
+
+        return response
 
 
 @dataclass
@@ -71,20 +112,23 @@ class BattleState:
     player1: BattlePlayer
     player2: BattlePlayer
 
+    active_player: BattlePlayer | None = None
+    inactive_player: BattlePlayer | None = None
     round_number: int = 0
+
     started: bool = False
     accepted: bool = False
+
     accept_view: BattleAcceptView | None = None
     channel: TextChannel | None = None
-    winner: BattlePlayer | None = None
-    gen_battle: Generator[str] | None = None
     last_turn: TurnView | None = None
 
     def start(self):
         if self.started:
             return
         self.started = True
-        self.gen_battle = gen_battle(self)
+        self.active_player = self.player1
+        self.inactive_player = self.player2
 
     def get_user(self, user: User | Member) -> BattlePlayer | None:
         if self.player1.user == user:
@@ -94,94 +138,24 @@ class BattleState:
 
         return None
 
+    def next_round(self) -> str | BattlePlayer:
+        if all(ball.dead for ball in self.player1.balls):
+            return self.player1
+        if all(ball.dead for ball in self.player1.balls):
+            return self.player2
+
+        if not self.active_player or not self.inactive_player:
+            raise Exception("Attempted to move on to next round without an active player!")
+
+        self.round_number += 1
+
+        # swap inactive and active
+        self.active_player, self.inactive_player = self.inactive_player, self.active_player
+
+        for ball in self.active_player.balls:
+            ball.round_passed(self.round_number)
+
+        return random.choice(self.active_player.balls).attack_target(random.choice(self.inactive_player.balls))
+
 
 # max_deck_size: int = max_deck_size
-
-
-def attack(current_ball: BattleBall, opponent_balls: list[BattleBall]):
-    alive_balls = [ball for ball in opponent_balls if not ball.dead]
-    opponent = random.choice(alive_balls)
-
-    damage = current_ball.damage
-    opponent.health -= damage
-    if opponent.health <= 0:
-        opponent.health = 0
-        opponent.dead = True
-
-    if opponent.dead:
-        text = format_random(
-            config.defeat_messages,
-            a_owner=current_ball.owner,
-            a_name=current_ball.model.countryball.country,
-            d_owner=opponent.owner,
-            d_name=opponent.model.countryball.country,
-            dmg=damage,
-        )
-    else:
-        text = format_random(
-            config.attack_messages,
-            a_owner=current_ball.owner,
-            a_name=current_ball.model.countryball.country,
-            d_owner=opponent.owner,
-            d_name=opponent.model.countryball.country,
-            dmg=damage,
-        )
-
-    return text
-
-
-def random_events(p1_ball: BattleBall, p2_ball: BattleBall):
-    if random.randint(1, 100) <= 25:
-        msg = format_random(
-            config.dodge_messages,
-            a_owner=p2_ball.owner,
-            a_name=p2_ball.model.countryball.country,
-            d_owner=p1_ball.owner,
-            d_name=p1_ball.model.countryball.country,
-        )
-        return True, msg
-    return False, ""
-
-
-def gen_battle(battle: BattleState):
-    turn = 0
-
-    while any(ball for ball in battle.player1.balls if not ball.dead) and any(
-        ball for ball in battle.player2.balls if not ball.dead
-    ):
-        alive_p1 = [ball for ball in battle.player1.balls if not ball.dead]
-        alive_p2 = [ball for ball in battle.player2.balls if not ball.dead]
-
-        for p1_ball, p2_ball in zip(alive_p1, alive_p2):
-            if not p1_ball.dead:
-                turn += 1
-
-                event = random_events(p1_ball, p2_ball)
-                if event[0]:
-                    yield event[1]
-                    continue
-
-                yield attack(p1_ball, battle.player2.balls)
-
-                if all(ball.dead for ball in battle.player2.balls):
-                    break
-
-            if not p2_ball.dead:
-                turn += 1
-
-                event = random_events(p2_ball, p1_ball)
-                if event[0]:
-                    yield event[1]
-                    continue
-
-                yield attack(p2_ball, battle.player1.balls)
-
-                if all(ball.dead for ball in battle.player1.balls):
-                    break
-
-    if all(ball.dead for ball in battle.player1.balls):
-        battle.winner = battle.player2
-    elif all(ball.dead for ball in battle.player2.balls):
-        battle.winner = battle.player1
-
-    battle.round_number = turn
