@@ -473,17 +473,15 @@ class Installer:
         logger.log(f"{config.name} installation finished", "INFO")
 
     async def uninstall(self, interaction: discord.Interaction):
-        shutil.make_archive(f"{config.path}/temp/cbackup", "zip", f"{config.path}/customs")
-
-        with zipfile.ZipFile(f"{config.path}/temp/cbackup.zip", "w") as myzip:
+        buffer = BytesIO()
+        shutil.make_archive(buffer, "zip", f"{config.path}/customs")
+        with zipfile.ZipFile(buffer, "a") as myzip:
             myzip.write(f"{config.path}/config.toml")
 
         self.interface.embed = InstallerEmbed(self, "uninstalled")
         self.interface.view = None
 
-        await interaction.message.edit(
-            attachments=[discord.File(f"{config.path}/temp/cbackup.zip")], **self.interface.fields
-        )
+        await interaction.message.edit(attachments=[discord.File(buffer)], **self.interface.fields)
         await interaction.response.defer()
 
         shutil.rmtree(config.path)  # Scary!
