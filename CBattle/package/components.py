@@ -181,9 +181,12 @@ class TurnView(View):
         await self.next_turn(interaction)
 
     async def next_turn(self, interaction: discord.Interaction):
-        if not interaction.user == self.battle.active_player.user:
-            await interaction.response.send_message("It's not your turn!", ephemeral=True)
-            return
+        # This works well, but until we have actual interactivity it's just annoying
+        # Once abilities & attack choices are there, then we can uncomment the following block
+
+        # if not interaction.user == self.battle.active_player.user:
+        #     await interaction.response.send_message("It's not your turn!", ephemeral=True)
+        #     return
 
         next_round = self.battle.next_round()
         if isinstance(next_round, BattlePlayer):
