@@ -211,7 +211,7 @@ class TurnView(View):
 
     def get_battle_status(self, player: BattlePlayer) -> str:
         lines = []
-        for ball in self.battle.player1.balls:
+        for ball in player.balls:
             if ball.dead:
                 status = "💀"
             else:
