@@ -16,7 +16,7 @@ class Config:
         self.attributes = data.get("attributes", {})
         self.attack_messages = data["messages"].get("attack", [])
         self.defeat_messages = data.get("messages", {}).get("defeat", {})
-        self.dodge_messages = data.get("messages", {}).get("dodge", {})
+        self.dodge_messages = data["messages"].get("dodge", [])
 
 
 config = Config(Path("./config.toml"))
