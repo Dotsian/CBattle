@@ -113,7 +113,7 @@ class InstallerEmbed(discord.Embed):
             output = logger.output[-1]
 
             if len(output) >= 750:
-                output = logger.output[-1][:750] + "..."
+                output = "..." + logger.output[-1][750:]
 
             self.description += f"\n```{output}```"
 
@@ -404,19 +404,20 @@ class Installer:
         return True
 
     async def install(self):
-        def copytree_skip_existing(src: Path, dst: Path, protect_files=None):
+        def copytree_skip_existing(src: Path, dst: Path, protect_files=[]):
             src = Path(src)
             dst = Path(dst)
 
             for path in src.rglob("*"):
                 print(f"Copying {path.as_posix()}")
+
                 relative_path = path.relative_to(src)
                 destination_path = dst / relative_path
 
                 if path.is_dir():
                     destination_path.mkdir(parents=True, exist_ok=True)
-                elif destination_path.exists() and destination_path.suffix == ".toml":
-                    logger.log("Skipping overwriting existing toml file", "INFO")
+                elif destination_path.exists() and destination_path.name in protect_files:
+                    logger.log(f"Skipping over protected '{destination_path.name}' file", "INFO")
                 else:
                     destination_path.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(path, destination_path)
@@ -431,14 +432,18 @@ class Installer:
             shutil.rmtree(tmp_package_path)
 
         os.makedirs(tmp_package_path)
+
         async with aiohttp.ClientSession() as session:
             url = f"https://github.com/{config.github[0]}/archive/refs/heads/{config.github[1]}.zip"
+
             async with session.get(url) as response:
                 if response.status != 200:
                     logger.log("Failed to download zip", "ERROR")
                     raise Exception("Installer failed")
+
                 logger.log("Get status code 200", "INFO")
                 data = await response.read()
+
                 with zipfile.ZipFile(BytesIO(data)) as zip_file:
                     zip_file.extractall(path=tmp_package_path)
 
@@ -447,31 +452,34 @@ class Installer:
         copytree_skip_existing(
             tmp_package_path / top_level_folder_name / config.folder / "package",
             target_dir,
-            protect_files=["config.toml", "customs/abilities.py"],
+            protect_files=["config.toml", "abilities.py", "effects.py"],
         )
 
+        package_path = config.path.replace("/", ".")
+
         logger.log("Inserting package in 'config.yml'", "INFO")
-        self.add_package(config.path.replace("/", "."))
+        self.add_package(package_path)
 
         logger.log(f"Loading {config.name} extension", "INFO")
 
         try:
-            await bot.reload_extension(config.path.replace("/", "."))  # type: ignore
+            await bot.reload_extension(package_path)  # type: ignore
         except commands.ExtensionNotLoaded:
-            await bot.load_extension(config.path.replace("/", "."))  # type: ignore
+            await bot.load_extension(cpackage_path)  # type: ignore
 
         logger.log(f"{config.name} installation finished", "INFO")
 
     async def uninstall(self, interaction: discord.Interaction):
-        shutil.make_archive(f"{config.path}/temp/backupconf", "zip", f"{config.path}/customs")
-        with zipfile.ZipFile(f"{config.path}/temp/backupconf.zip", "w") as myzip:
+        shutil.make_archive(f"{config.path}/temp/cbackup", "zip", f"{config.path}/customs")
+
+        with zipfile.ZipFile(f"{config.path}/temp/cbackup.zip", "w") as myzip:
             myzip.write(f"{config.path}/config.toml")
 
         self.interface.embed = InstallerEmbed(self, "uninstalled")
         self.interface.view = None
 
         await interaction.message.edit(
-            attachments=[discord.File(f"{config.path}/temp/backupconf.zip")], **self.interface.fields
+            attachments=[discord.File(f"{config.path}/temp/cbackup.zip")], **self.interface.fields
         )
         await interaction.response.defer()
 
