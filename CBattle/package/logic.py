@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
-from socket import inet_aton
 from typing import TYPE_CHECKING, Type
 
 from ballsdex.core.models import BallInstance, Player
@@ -35,7 +34,7 @@ class BattleBall:
     evasion: float = 0.25
     dead: bool = False
 
-    effects: list[BaseEffect] = field(default_factory=list)
+    effects: set[BaseEffect] = field(default_factory=set)
 
     @classmethod
     def from_ballinstance(cls, ballinstance: BallInstance, owner: BattlePlayer):
@@ -54,7 +53,11 @@ class BattleBall:
         return self.model.countryball.country
 
     def apply_effect(self, effect: Type[BaseEffect], rounds: int):
-        self.effects.append(effect(self, rounds))
+        self.effects.add(effect(self, rounds))
+
+    def round_passed(self, round_number):
+        for effect in self.effects:
+            effect.round_passed(round_number)
 
     def attack_target(self, target: BattleBall) -> str:
         if random.random() < target.evasion:
@@ -136,6 +139,10 @@ class BattleState:
 
         # swap inactive and active
         self.active_player, self.inactive_player = self.inactive_player, self.active_player
+
+        for ball in self.active_player.balls:
+            ball.round_passed(self.round_number)
+
         return random.choice(self.active_player.balls).attack_target(random.choice(self.inactive_player.balls))
 
 
