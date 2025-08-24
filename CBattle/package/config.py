@@ -1,3 +1,4 @@
+import os
 import tomllib
 from pathlib import Path
 
@@ -8,7 +9,7 @@ class Config:
     """
 
     def __init__(self, path: Path):
-        with open(path) as config_file:
+        with path.open("rb") as config_file:
             data = tomllib.load(config_file)
 
         self.max_ball_amount = data["settings"].get("max-ball-amount", 5)
@@ -19,4 +20,5 @@ class Config:
         self.dodge_messages = data["messages"].get("dodge", [])
 
 
-config = Config(Path("./config.toml"))
+CONFIG_PATH = Path(os.path.dirname(os.path.abspath(__file__)), "./config.toml")
+config = Config(CONFIG_PATH)
