@@ -32,6 +32,7 @@ class BattleBall:
     attack: int
 
     evasion: float = 0.25
+    crit_chance: float = 0.5
     dead: bool = False
 
     effects: set[BaseEffect] = field(default_factory=set)
@@ -66,14 +67,25 @@ class BattleBall:
             )
 
         damage = int(self.attack * random.uniform(0.6, 1.2))
+
+        crit = False
+        if random.random() < self.crit_chance:
+            crit = True
+            damage *= 2
+
         if target.damage(damage):
-            return random.choice(config.defeat_messages).format(
+            response = random.choice(config.defeat_messages).format(
                 a_owner=self.owner, a_name=self.name, d_owner=target.owner, d_name=target.name, dmg=damage
             )
         else:
-            return random.choice(config.attack_messages).format(
+            response = random.choice(config.attack_messages).format(
                 a_owner=self.owner, a_name=self.name, d_owner=target.owner, d_name=target.name, dmg=damage
             )
+
+        if crit:
+            response += "\nIt's a critical hit!"
+
+        return response
 
 
 @dataclass
