@@ -15,7 +15,7 @@ class Config:
         self.debug = data["settings"].get("debug", False)
         self.attributes = data.get("attributes", {})
         self.attack_messages = data["messages"].get("attack", [])
-        self.defeat_messages = data.get("messages", {}).get("defeat", {})
+        self.defeat_messages = data["messages"].get("defeat", [])
         self.dodge_messages = data["messages"].get("dodge", [])
 
 
