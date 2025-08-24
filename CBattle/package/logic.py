@@ -32,7 +32,7 @@ class BattleBall:
     attack: int
 
     evasion: float = 0.25
-    crit_chance: float = 0.5
+    crit_chance: float = 0.2
     dead: bool = False
 
     effects: set[BaseEffect] = field(default_factory=set)
