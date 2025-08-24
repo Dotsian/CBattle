@@ -139,7 +139,7 @@ class BattleState:
         return None
 
     def next_round(self) -> str | BattlePlayer:
-        if all(ball.dead for ball in self.player1.balls):
+        if all(ball.dead for ball in self.player2.balls):
             return self.player1
         if all(ball.dead for ball in self.player1.balls):
             return self.player2
