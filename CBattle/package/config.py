@@ -14,6 +14,9 @@ class Config:
         self.max_ball_amount = data["settings"].get("max-ball-amount", 5)
         self.debug = data["settings"].get("debug", False)
         self.attributes = data.get("attributes", {})
+        self.attack_messages = data["messages"].get("attack", [])
+        self.defeat_messages = data["messages"].get("defeat", [])
+        self.dodge_messages = data["messages"].get("dodge", [])
 
 
 config = Config(Path("./config.toml"))

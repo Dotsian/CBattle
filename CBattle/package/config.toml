@@ -12,3 +12,30 @@ debug = false
 # European = ["Poland"]
 # South-American = ["Brazil"]
 # Western-Hemisphere = ["Brazil", "Mexico"]
+
+
+# Messages for automated and classic modes
+# Variables: {a_owner} {d_owner} {a_name} {a_owner} {dmg}
+[messages]
+
+attack = [
+    "{a_owner}'s {a_name} attacks {d_owner}'s {d_name} for {dmg} DMG!",
+    "{a_name} uppercuts {d_name}, dealing {dmg} DMG!",
+    "{a_owner}'s {a_name} slices {d_name}! ({dmg} DMG)",
+    "{a_name} lands a solid blow on {d_name} for {dmg} DMG",
+]
+
+defeat = [
+   "{a_name} has easily crushed {d_name}!",
+    "{d_owner}'s {d_name} has fallen to {a_owner}'s {a_name}.",
+    "{a_name} knocks out {d_name}!",
+    "{d_name} has been defeated!",
+]
+
+dodge = [
+    "{a_name} tries to land a blow, but {d_name} dodges!",
+    "{d_owner}'s {d_name} evades {a_owner}'s {a_name} attack!",
+    "{d_name} sidesteps the attack!",
+]
+
+

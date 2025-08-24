@@ -7,31 +7,15 @@ from typing import TYPE_CHECKING, Generator, Type
 from ballsdex.core.models import BallInstance, Player
 
 from .base import BaseEffect
+from .config import config
 
 if TYPE_CHECKING:
     from discord import Member, TextChannel, User
 
     from .components import BattleAcceptView, TurnView
 
-ATTACK_MESSAGES = [
-    "{a_owner}'s {a_name} attacks {d_owner}'s {d_name} for {dmg} DMG!",
-    "{a_name} uppercuts {d_name}, dealing {dmg} DMG!",
-    "{a_owner}'s {a_name} slices {d_name}! ({dmg} DMG)",
-    "{a_name} lands a solid blow on {d_name} for {dmg} DMG",
-]
 
-DEFEAT_MESSAGES = [
-    "{a_name} has easily crushed {d_name}!",
-    "{d_owner}'s {d_name} has fallen to {a_owner}'s {a_name}.",
-    "{a_name} knocks out {d_name}!",
-    "{d_name} has been defeated!",
-]
 
-DODGE_MESSAGES = [
-    "{a_name} tries to land a blow, but {d_name} dodges!",
-    "{d_owner}'s {d_name} evades {a_owner}'s {a_name} attack!",
-    "{d_name} sidesteps the attack!",
-]
 
 
 def format_random(msg_list, **kwargs):
@@ -126,7 +110,7 @@ def attack(current_ball: BattleBall, opponent_balls: list[BattleBall]):
 
     if opponent.dead:
         text = format_random(
-            DEFEAT_MESSAGES,
+            config.defeat_messages,
             a_owner=current_ball.owner,
             a_name=current_ball.model.countryball.country,
             d_owner=opponent.owner,
@@ -135,7 +119,7 @@ def attack(current_ball: BattleBall, opponent_balls: list[BattleBall]):
         )
     else:
         text = format_random(
-            ATTACK_MESSAGES,
+            config.attack_messages,
             a_owner=current_ball.owner,
             a_name=current_ball.model.countryball.country,
             d_owner=opponent.owner,
@@ -149,7 +133,7 @@ def attack(current_ball: BattleBall, opponent_balls: list[BattleBall]):
 def random_events(p1_ball: BattleBall, p2_ball: BattleBall):
     if random.randint(1, 100) <= 25:
         msg = format_random(
-            DODGE_MESSAGES,
+            config.dodge_messages,
             a_owner=p2_ball.owner,
             a_name=p2_ball.model.countryball.country,
             d_owner=p1_ball.owner,
