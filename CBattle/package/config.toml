@@ -25,7 +25,7 @@ attack = [
 ]
 
 defeat = [
-   "{a_name} has easily crushed {d_name}!",
+    "{a_name} has easily crushed {d_name}!",
     "{d_owner}'s {d_name} has fallen to {a_owner}'s {a_name}.",
     "{a_name} knocks out {d_name}!",
     "{d_name} has been defeated!",
