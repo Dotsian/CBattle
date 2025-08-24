@@ -13,10 +13,9 @@ debug = false
 # South-American = ["Brazil"]
 # Western-Hemisphere = ["Brazil", "Mexico"]
 
-
+[messages]
 # Messages for automated and classic modes
 # Variables: {a_owner} {d_owner} {a_name} {a_owner} {dmg}
-[messages]
 
 attack = [
     "{a_owner}'s {a_name} attacks {d_owner}'s {d_name} for {dmg} DMG!",
@@ -37,5 +36,3 @@ dodge = [
     "{d_owner}'s {d_name} evades {a_owner}'s {a_name} attack!",
     "{d_name} sidesteps the attack!",
 ]
-
-
