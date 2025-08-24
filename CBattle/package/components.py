@@ -171,6 +171,10 @@ class TurnView(View):
 
     @button(style=discord.ButtonStyle.green, label="Next Turn")
     async def next_turn_button(self, interaction: discord.Interaction["BallsDexBot"], button: Button):
+        if self.battle.last_turn != self:
+            await self.message.delete()
+            await interaction.response.send_message("Oops, I am not supposed to exist", ephemeral=True)
+
         if interaction.user != self.battle.player1.user and interaction.user != self.battle.player2.user:
             await interaction.response.send_message("You're not a part of this battle.", ephemeral=True)
             return
@@ -183,7 +187,6 @@ class TurnView(View):
 
         next_round = self.battle.next_round()
         if isinstance(next_round, BattlePlayer):
-            next_round = "Battle finished!"
             await self.battle.channel.send(f"Battle finished! Winner: {next_round.user.mention}")
             for child in [x for x in self.children if isinstance(x, Button)]:
                 child.disabled = True
