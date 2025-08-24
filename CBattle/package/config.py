@@ -14,7 +14,7 @@ class Config:
         self.max_ball_amount = data["settings"].get("max-ball-amount", 5)
         self.debug = data["settings"].get("debug", False)
         self.attributes = data.get("attributes", {})
-        self.attack_messages = data.get("messages", {}).get("battle", {})
+        self.attack_messages = data["messages"].get("attack", [])
         self.defeat_messages = data.get("messages", {}).get("defeat", {})
         self.dodge_messages = data.get("messages", {}).get("dodge", {})
 
