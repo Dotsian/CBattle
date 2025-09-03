@@ -9,6 +9,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
+import asyncio
 import os
 import re
 import shutil
@@ -194,6 +195,28 @@ class InstallerView(discord.ui.View):
 
         await interaction.message.edit(**self.installer.interface.fields)
         await interaction.response.defer()
+
+    @discord.ui.button(style=discord.ButtonStyle.secondary, label="Load", disabled=not UPDATING)
+    async def load_button(self, interaction: discord.Interaction, _: discord.ui.Button):
+        await interaction.response.send_message("Please send your `cbackup.zip` file below.", ephemeral=True)
+
+        try:
+            message = await bot.wait_for(  # type: ignore
+                "message", check=lambda m: m.author == interaction.user and m.channel == interaction.channel, timeout=20
+            )
+        except asyncio.TimeoutError:
+            await interaction.followup.send("Backup restoration has timed out.", ephemeral=True)
+            return
+
+        if message.attachments == []:
+            await interaction.followup.send("Please attach your `cbackup.zip` file to your message.", ephemeral=True)
+            return
+
+        if not message.attachments[0].filename.endswith(".zip"):
+            await interaction.followup.send("The file attached must be a `zip` file.", ephemeral=True)
+            return
+
+        # Add restoration logic here
 
     @discord.ui.button(style=discord.ButtonStyle.red, label="Exit")
     async def quit_button(self, interaction: discord.Interaction, _: discord.ui.Button):
