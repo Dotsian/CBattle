@@ -1,7 +1,7 @@
 import discord
 
 from discord.ui import LayoutView, Container, TextDisplay, Button, Thumbnail
-from discord import Interaction, ButtonStyle, Colour, MessageFlags
+from discord import Interaction, ButtonStyle, Colour
 
 from .cog import TUTORIAL, THUMBNAILS
 
