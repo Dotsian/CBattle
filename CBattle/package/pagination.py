@@ -1,9 +1,8 @@
-from discord import Interaction, ButtonStyle, Colour
-from discord.ui import LayoutView, Container, Section, TextDisplay, Thumbnail, ActionRow, Button
+import discord
 
 from .cog import TUTORIAL, THUMBNAILS
 
-class TutorialPagesV2(discord.ui.LayoutView):
+class TutorialPages(discord.ui.LayoutView):
     def __init__(self, pages, author_id: int):
         super().__init__(timeout=None)
         self.pages = pages
