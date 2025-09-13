@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
-from discord.ui import MessageFlags
 from discord.ext import commands
 
 from ballsdex.core.models import Player
@@ -86,14 +85,10 @@ class Battle(commands.GroupCog):
     async def tutorial(self, interaction: discord.Interaction):
         """View the tutorial for CBattling!"""
 
-        pages = [lambda i=i: None for i in range(6)] 
+        pages = [lambda i=i: None for i in range(6)]
         view = TutorialPages(pages, interaction.user.id)
 
-        await interaction.response.send_message(
-            view=view,
-            flags=discord.MessageFlags.components_v2()
-        )
-
+        await interaction.response.send_message(view=view, flags=discord.MessageFlags.components_v2())
 
     @app_commands.command()
     async def add(self, interaction: discord.Interaction["BallsDexBot"], countryball: BallInstanceTransform):

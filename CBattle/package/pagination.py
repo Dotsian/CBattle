@@ -1,6 +1,7 @@
 import discord
 
-from .cog import TUTORIAL, THUMBNAILS
+from .cog import THUMBNAILS, TUTORIAL
+
 
 class TutorialPages(discord.ui.LayoutView):
     def __init__(self, pages, author_id: int):
@@ -20,7 +21,7 @@ class TutorialPages(discord.ui.LayoutView):
         section = discord.ui.Section(
             discord.ui.TextDisplay(content=f"**Tutorial Page {self.current + 1}: {title}**"),
             discord.ui.TextDisplay(content=description),
-            accessory=discord.ui.Thumbnail(media=thumbnail_url)
+            accessory=discord.ui.Thumbnail(media=thumbnail_url),
         )
 
         action_row = discord.ui.ActionRow(
@@ -30,12 +31,7 @@ class TutorialPages(discord.ui.LayoutView):
             discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="⏭️", custom_id="last"),
         )
 
-        container = discord.ui.Container(
-            section,
-            action_row,
-            accent_colour=discord.Colour.red(),
-            spoiler=True
-        )
+        container = discord.ui.Container(section, action_row, accent_colour=discord.Colour.red(), spoiler=True)
 
         self.add_item(container)
 
