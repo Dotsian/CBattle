@@ -6,7 +6,6 @@ from discord.ext import commands
 
 from ballsdex.core.models import Player
 from ballsdex.core.utils.transformers import BallInstanceTransform
-from ballsdex.settings import settings
 
 from .components import BattleStartView
 from .logic import BattleBall, BattlePlayer, BattleState
