@@ -1,9 +1,8 @@
-import discord
+from discord import ButtonStyle, Colour, Interaction
+from discord.ui import Button, Container, LayoutView, TextDisplay, Thumbnail
 
-from discord.ui import LayoutView, Container, TextDisplay, Button, Thumbnail
-from discord import Interaction, ButtonStyle, Colour
+from .cog import THUMBNAILS, TUTORIAL
 
-from .cog import TUTORIAL, THUMBNAILS
 
 class TutorialPages(LayoutView):
     def __init__(self, pages, author_id: int):
@@ -22,9 +21,7 @@ class TutorialPages(LayoutView):
 
         container = Container(accent_color=Colour.red())
 
-        container.add_item(TextDisplay(
-            text=f"**Tutorial Page {self.current + 1}: {title}**\n{description}"
-        ))
+        container.add_item(TextDisplay(text=f"**Tutorial Page {self.current + 1}: {title}**\n{description}"))
 
         container.add_item(Thumbnail(url=thumbnail_url))
 
