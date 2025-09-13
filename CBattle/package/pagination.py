@@ -1,5 +1,7 @@
 import discord
 
+from ballsdex.settings import settings
+
 TUTORIAL = {
     "Welcome to CBattle!": (
         "Welcome, soldier, and thank you for installing CBattle! In this package, battling is greatly improved by "
