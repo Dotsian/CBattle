@@ -72,7 +72,7 @@ class TutorialButton(discord.ui.Button):
             case "next":
                 self.view_ref.current = (self.view_ref.current + 1) % len(self.view_ref.pages)
             case "last":
-                self.view_ref.current = len(self.view_ref.current) - 1
+                self.view_ref.current = 4
 
         self.view_ref.build_page()
         await interaction.response.edit_message(view=self.view_ref)
