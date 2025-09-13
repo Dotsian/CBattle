@@ -106,7 +106,7 @@ class TutorialPages(discord.ui.LayoutView):
             TutorialButton(" ", "⏭️", discord.ButtonStyle.secondary, "last", self),
         )
 
-        container = discord.ui.Container(section, action_row, accent_colour=discord.Colour.red(), spoiler=True)
+        container = discord.ui.Container(section, action_row, accent_colour=discord.Colour.red())
 
         self.add_item(container)
 
