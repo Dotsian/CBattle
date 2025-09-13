@@ -58,6 +58,26 @@ THUMBNAILS = [
     "https://th.bing.com/th/id/R.a5b17534342efbc6b3d1c9689255c7b7?rik=9u%2fKoEzC1XQ1jw&pid=ImgRaw&r=0",
 ]
 
+class TutorialButton(discord.ui.Button):
+    def __init__(self, label, emoji, style, custom_id, parent):
+        super().__init__(label=label, emoji=emoji, style=style, custom_id=custom_id)
+        self.parent = parent
+
+    async def callback(self, interaction: discord.Interaction):
+        match self.custom_id:
+            case "first":
+                self.parent.current = 0
+            case "prev":
+                self.parent.current = (self.parent.current - 1) % len(self.parent.pages)
+            case "next":
+                self.parent.current = (self.parent.current + 1) % len(self.parent.pages)
+            case "last":
+                self.parent.current = len(self.parent.pages) - 1
+
+        self.parent.build_page()
+        await interaction.response.edit_message(view=self.parent)
+
+
 class TutorialPages(discord.ui.LayoutView):
     def __init__(self, pages, author_id: int):
         super().__init__(timeout=None)
@@ -80,10 +100,10 @@ class TutorialPages(discord.ui.LayoutView):
         )
 
         action_row = discord.ui.ActionRow(
-            discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="⏮️", custom_id="first"),
-            discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="◀️", custom_id="prev"),
-            discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="▶️", custom_id="next"),
-            discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="⏭️", custom_id="last"),
+            TutorialButton(" ", "⏮️", discord.ButtonStyle.secondary, "first", self),
+            TutorialButton(" ", "◀️", discord.ButtonStyle.secondary, "prev", self),
+            TutorialButton(" ", "▶️", discord.ButtonStyle.secondary, "next", self),
+            TutorialButton(" ", "⏭️", discord.ButtonStyle.secondary, "last", self),
         )
 
         container = discord.ui.Container(section, action_row, accent_colour=discord.Colour.red(), spoiler=True)
@@ -95,17 +115,3 @@ class TutorialPages(discord.ui.LayoutView):
             await interaction.response.send_message("You are not allowed to interact with this menu.", ephemeral=True)
             return False
         return True
-
-    async def on_button_click(self, interaction: discord.Interaction):
-        match interaction.data["custom_id"]:
-            case "first":
-                self.current = 0
-            case "prev":
-                self.current = (self.current - 1) % len(self.pages)
-            case "next":
-                self.current = (self.current + 1) % len(self.pages)
-            case "last":
-                self.current = len(self.pages) - 1
-
-        self.build_page()
-        await interaction.response.edit_message(view=self)
