@@ -29,8 +29,8 @@ from discord.ext import commands
 UPDATING = os.path.isdir("ballsdex/packages/cbattle")
 ASSET_PATH = "https://raw.githubusercontent.com/Dotsian/CBattle/refs/heads/main/assets"
 
-bot: commands.Bot
-ctx: commands.Context
+# bot: commands.Bot
+# ctx: commands.Context
 
 
 @dataclass
