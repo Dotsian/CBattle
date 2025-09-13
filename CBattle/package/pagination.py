@@ -59,23 +59,23 @@ THUMBNAILS = [
 ]
 
 class TutorialButton(discord.ui.Button):
-    def __init__(self, label, emoji, style, custom_id, parent):
+    def __init__(self, label, emoji, style, custom_id, view_ref):
         super().__init__(label=label, emoji=emoji, style=style, custom_id=custom_id)
-        self.viewref = viewref
+        self.view_ref = view_ref
 
     async def callback(self, interaction: discord.Interaction):
         match self.custom_id:
             case "first":
-                self.viewref.current = 0
+                self.view_ref.current = 0
             case "prev":
-                self.viewref.current = (self.viewref.current - 1) % len(self.viewref.pages)
+                self.view_ref.current = (self.view_ref.current - 1) % len(self.view_ref.pages)
             case "next":
-                self.viewref.current = (self.viewref.current + 1) % len(self.viewref.pages)
+                self.view_ref.current = (self.view_ref.current + 1) % len(self.view_ref.pages)
             case "last":
-                self.viewref.current = len(self.viewref.current) - 1
+                self.view_ref.current = len(self.view_ref.current) - 1
 
-        self.viewref.build_page()
-        await interaction.response.edit_message(view=self.viewref)
+        self.view_ref.build_page()
+        await interaction.response.edit_message(view=self.view_ref)
 
 
 class TutorialPages(discord.ui.LayoutView):
