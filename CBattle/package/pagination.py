@@ -3,7 +3,7 @@ from discord.ui import LayoutView, Container, Section, TextDisplay, Thumbnail, A
 
 from .cog import TUTORIAL, THUMBNAILS
 
-class TutorialPages(LayoutView):
+class TutorialPagesV2(discord.ui.LayoutView):
     def __init__(self, pages, author_id: int):
         super().__init__(timeout=None)
         self.pages = pages
@@ -18,35 +18,35 @@ class TutorialPages(LayoutView):
         description = TUTORIAL[title]
         thumbnail_url = THUMBNAILS[self.current]
 
-        section = Section(
-            TextDisplay(content=f"**Tutorial Page {self.current + 1}: {title}**"),
-            TextDisplay(content=description),
-            accessory=Thumbnail(media=thumbnail_url)
+        section = discord.ui.Section(
+            discord.ui.TextDisplay(content=f"**Tutorial Page {self.current + 1}: {title}**"),
+            discord.ui.TextDisplay(content=description),
+            accessory=discord.ui.Thumbnail(media=thumbnail_url)
         )
 
-        action_row = ActionRow(
-            Button(style=ButtonStyle.secondary, emoji="⏮️", custom_id="first"),
-            Button(style=ButtonStyle.secondary, emoji="◀️", custom_id="prev"),
-            Button(style=ButtonStyle.secondary, emoji="▶️", custom_id="next"),
-            Button(style=ButtonStyle.secondary, emoji="⏭️", custom_id="last"),
+        action_row = discord.ui.ActionRow(
+            discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="⏮️", custom_id="first"),
+            discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="◀️", custom_id="prev"),
+            discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="▶️", custom_id="next"),
+            discord.ui.Button(style=discord.ButtonStyle.secondary, emoji="⏭️", custom_id="last"),
         )
 
-        container = Container(
+        container = discord.ui.Container(
             section,
             action_row,
-            accent_colour=Colour(14169654),
+            accent_colour=discord.Colour.red(),
             spoiler=True
         )
 
         self.add_item(container)
 
-    async def interaction_check(self, interaction: Interaction) -> bool:
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message("You are not allowed to interact with this menu.", ephemeral=True)
             return False
         return True
 
-    async def on_button_click(self, interaction: Interaction):
+    async def on_button_click(self, interaction: discord.Interaction):
         match interaction.data["custom_id"]:
             case "first":
                 self.current = 0
