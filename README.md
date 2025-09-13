@@ -14,8 +14,8 @@ CBattle is the first public interactive battle package developed by CrashTextAle
 
 To install CBattle, you must have the following:
 
-* Ballsdex
-* Eval access
+- Ballsdex
+- Eval access
 
 ## CBattle Setup
 
@@ -25,4 +25,22 @@ To install CBattle, run the following eval command:
 
 > ```py
 > import base64, requests; await ctx.invoke(bot.get_command("eval"), body=base64.b64decode(requests.get("https://api.github.com/repos/Dotsian/CBattle/contents/CBattle/github/installer.py").json()["content"]).decode())
+> ```
+
+## Manual Installation
+
+If you dont have eval access then you can install the package manually.
+
+Start by downloading the main branch as a zip. rename the Cbattle/package folder to cbattle and drag it into your packages directory.
+
+Then add the following value to your packages in the config.yml file
+
+> ```
+> ballsdex.packages.cbattle
+> ```
+
+Then restart your instance using
+
+> ```
+> docker compose restart
 > ```
