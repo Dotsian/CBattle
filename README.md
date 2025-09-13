@@ -1,4 +1,4 @@
-# CBattle - Interactive Battle Package
+# CBattle - Interactive Battle Package [UNFINISHED]
 
 ![CBattle Banner](assets/Promo.png)
 
