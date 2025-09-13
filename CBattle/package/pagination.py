@@ -1,47 +1,61 @@
-import discord
+from discord import Interaction, ButtonStyle, Colour
+from discord.ui import LayoutView, Container, Section, TextDisplay, Thumbnail, ActionRow, Button
 
+from .cog import TUTORIAL, THUMBNAILS
 
-class TutorialPages(discord.ui.View):
+class TutorialPages(LayoutView):
     def __init__(self, pages, author_id: int):
         super().__init__(timeout=None)
-
         self.pages = pages
         self.author_id = author_id
-
         self.current = 0
+        self.build_page()
 
-    async def update_page(self, interaction: discord.Interaction):
-        embed, attachment = await self.pages[self.current]()
+    def build_page(self):
+        self.clear_items()
 
-        if attachment:
-            await interaction.response.edit_message(embed=embed, attachments=[attachment], view=self)
-            return
+        title = list(TUTORIAL.keys())[self.current]
+        description = TUTORIAL[title]
+        thumbnail_url = THUMBNAILS[self.current]
 
-        await interaction.response.edit_message(embed=embed, view=self)
+        section = Section(
+            TextDisplay(content=f"**Tutorial Page {self.current + 1}: {title}**"),
+            TextDisplay(content=description),
+            accessory=Thumbnail(media=thumbnail_url)
+        )
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        action_row = ActionRow(
+            Button(style=ButtonStyle.secondary, emoji="⏮️", custom_id="first"),
+            Button(style=ButtonStyle.secondary, emoji="◀️", custom_id="prev"),
+            Button(style=ButtonStyle.secondary, emoji="▶️", custom_id="next"),
+            Button(style=ButtonStyle.secondary, emoji="⏭️", custom_id="last"),
+        )
+
+        container = Container(
+            section,
+            action_row,
+            accent_colour=Colour(14169654),
+            spoiler=True
+        )
+
+        self.add_item(container)
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message("You are not allowed to interact with this menu.", ephemeral=True)
             return False
-
         return True
 
-    @discord.ui.button(style=discord.ButtonStyle.secondary, label="⇐")
-    async def go_first(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.current = 0
-        await self.update_page(interaction)
+    async def on_button_click(self, interaction: Interaction):
+        match interaction.data["custom_id"]:
+            case "first":
+                self.current = 0
+            case "prev":
+                self.current = (self.current - 1) % len(self.pages)
+            case "next":
+                self.current = (self.current + 1) % len(self.pages)
+            case "last":
+                self.current = len(self.pages) - 1
 
-    @discord.ui.button(style=discord.ButtonStyle.primary, label="◁")
-    async def go_previous(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.current = (self.current - 1) % len(self.pages)
-        await self.update_page(interaction)
-
-    @discord.ui.button(style=discord.ButtonStyle.primary, label="▷")
-    async def go_next(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.current = (self.current + 1) % len(self.pages)
-        await self.update_page(interaction)
-
-    @discord.ui.button(style=discord.ButtonStyle.secondary, label="⇒")
-    async def go_last(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.current = len(self.pages) - 1
-        await self.update_page(interaction)
+        self.build_page()
+        await interaction.response.edit_message(view=self)
