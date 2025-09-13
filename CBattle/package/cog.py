@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
+from discord.ui import MessageFlags
 from discord.ext import commands
 
 from ballsdex.core.models import Player
@@ -83,35 +84,16 @@ class Battle(commands.GroupCog):
 
     @app_commands.command()
     async def tutorial(self, interaction: discord.Interaction):
-        """
-        View the tutorial for CBattling!
-        """
+        """View the tutorial for CBattling!"""
 
-        def make_pages(page_num: int):
-            async def page():
-                title = list(TUTORIAL.keys())[page_num]
-                description = TUTORIAL[title]
-                thumbnail = THUMBNAILS[page_num]
-
-                embed = discord.Embed(
-                    title=f"Tutorial Page {page_num + 1}: {title}", description=description, color=discord.Color.red()
-                )
-
-                embed.set_thumbnail(url=thumbnail)
-
-                return embed, None
-
-            return page
-
-        pages = [make_pages(i) for i in range(6)]
+        pages = [lambda i=i: None for i in range(6)] 
         view = TutorialPages(pages, interaction.user.id)
-        embed, attachment = await pages[0]()
 
-        if attachment:
-            await interaction.response.send_message(embed=embed, file=attachment, view=view)
-            return
+        await interaction.response.send_message(
+            view=view,
+            flags=discord.MessageFlags.components_v2()
+        )
 
-        await interaction.response.send_message(embed=embed, view=view)
 
     @app_commands.command()
     async def add(self, interaction: discord.Interaction["BallsDexBot"], countryball: BallInstanceTransform):
