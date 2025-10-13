@@ -29,6 +29,9 @@ from discord.ext import commands
 UPDATING = os.path.isdir("ballsdex/packages/cbattle")
 ASSET_PATH = "https://raw.githubusercontent.com/Dotsian/CBattle/refs/heads/main/assets"
 
+# bot: commands.Bot
+# ctx: commands.Context
+
 
 @dataclass
 class InstallerConfig:
@@ -364,10 +367,10 @@ class InstallerGUI:
         if not self.loaded:
             self.loaded = True
 
-            await ctx.send(**self.fields)  # type: ignore
+            await ctx.send(**self.fields)
             return
 
-        await ctx.message.edit(**self.fields)  # type: ignore
+        await ctx.message.edit(**self.fields)
 
 
 class Installer:
@@ -463,9 +466,9 @@ class Installer:
         logger.log(f"Loading {config.name} extension", "INFO")
 
         try:
-            await bot.reload_extension(package_path)  # type: ignore
+            await bot.reload_extension(package_path)
         except commands.ExtensionNotLoaded:
-            await bot.load_extension(cpackage_path)  # type: ignore
+            await bot.load_extension(package_path)
 
         logger.log(f"{config.name} installation finished", "INFO")
 
@@ -483,7 +486,7 @@ class Installer:
 
         shutil.rmtree(config.path)  # Scary!
 
-        await bot.unload_extension(config.path.replace("/", "."))  # type: ignore
+        await bot.unload_extension(config.path.replace("/", "."))
 
     @property
     def latest_version(self):
@@ -516,5 +519,5 @@ class Installer:
         return old_version.group(1)
 
 
-installer = Installer(ctx.author)  # type: ignore
-await installer.interface.reload()  # type: ignore
+installer = Installer(ctx.author)
+await installer.interface.reload()
