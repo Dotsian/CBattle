@@ -1,6 +1,6 @@
 # CBattle - Interactive Battle Package [UNFINISHED]
 
-![CBattle Banner](assets/Promo.png)
+![CBattle Banner](assets/Banner.png)
 
 [![Ruff](https://github.com/Dotsian/CBattle/actions/workflows/ruff.yml/badge.svg)](https://github.com/Dotsian/CBattle/actions/workflows/ruff.yml)
 [![Issues](https://img.shields.io/github/issues/Dotsian/CBattle)](https://github.com/Dotsian/CBattle/issues)
